@@ -32,8 +32,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#history">
-                            <i class="fas fa-history me-1"></i>History
+                        <a class="nav-link" href="#weatherSection">
+                            <i class="fas fa-cloud-sun me-1"></i>Weather
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparisonSection">
+                            <i class="fas fa-users me-1"></i>Compare
                         </a>
                     </li>
                 </ul>
@@ -42,16 +47,37 @@
     </nav>
 
     <div class="container mt-4">
-        <!-- Header Section -->
+        <!-- Enhanced Header Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h1 class="card-title">
-                            <i class="fas fa-rocket me-2 text-primary"></i>
+                <div class="card hero-card">
+                    <div class="card-body text-center py-5">
+                        <div class="hero-icon mb-3">
+                            <i class="fas fa-rocket fa-4x text-primary"></i>
+                        </div>
+                        <h1 class="card-title display-4 fw-bold mb-3">
                             Advanced F1 Performance Analytics
                         </h1>
-                        <p class="card-text">Comprehensive analysis using quantum modeling, race strategy insights, and real-time analytics</p>
+                        <p class="lead mb-4">
+                            Comprehensive analysis using quantum modeling, race strategy insights, weather impact assessment, and real-time analytics
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <span class="badge bg-primary fs-6 px-3 py-2">
+                                <i class="fas fa-atom me-1"></i>Quantum Analysis
+                            </span>
+                            <span class="badge bg-success fs-6 px-3 py-2">
+                                <i class="fas fa-chess me-1"></i>Strategy Optimization
+                            </span>
+                            <span class="badge bg-info fs-6 px-3 py-2">
+                                <i class="fas fa-cloud-sun me-1"></i>Weather Impact
+                            </span>
+                            <span class="badge bg-warning fs-6 px-3 py-2">
+                                <i class="fas fa-heartbeat me-1"></i>Driver Stress
+                            </span>
+                            <span class="badge bg-secondary fs-6 px-3 py-2">
+                                <i class="fas fa-users me-1"></i>Head-to-Head
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,6 +188,12 @@
                                         <button type="button" class="btn btn-secondary" onclick="runAdvancedAnalysis()">
                                             <i class="fas fa-cogs me-1"></i>Advanced
                                         </button>
+                                        <button type="button" class="btn btn-dark" onclick="runWeatherAnalysis()">
+                                            <i class="fas fa-cloud-sun me-1"></i>Weather
+                                        </button>
+                                        <button type="button" class="btn btn-light text-dark" onclick="runDriverComparison()">
+                                            <i class="fas fa-users me-1"></i>Compare
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -229,20 +261,34 @@
             </div>
         </div>
 
-        <!-- Analysis History -->
-        <div class="row mb-4" id="history">
+        <!-- Weather Analysis Section -->
+        <div class="row mb-4" id="weatherSection" style="display: none;">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="fas fa-history me-2"></i>Analysis History</h3>
-                        <button class="btn btn-sm btn-outline-light float-end" onclick="loadAnalysisHistory()">
-                            <i class="fas fa-refresh me-1"></i>Refresh
-                        </button>
+                        <h3><i class="fas fa-cloud-sun me-2"></i>Weather Impact Analysis</h3>
                     </div>
-                    <div class="card-body" id="historyContent">
+                    <div class="card-body" id="weatherContent">
                         <div class="text-center text-muted">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <p>Click refresh to load analysis history</p>
+                            <i class="fas fa-thermometer-half fa-3x mb-3"></i>
+                            <p>Weather data and track conditions analysis will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driver Comparison Section -->
+        <div class="row mb-4" id="comparisonSection" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users me-2"></i>Driver Head-to-Head Comparison</h3>
+                    </div>
+                    <div class="card-body" id="comparisonContent">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-balance-scale fa-3x mb-3"></i>
+                            <p>Driver comparison data will appear here</p>
                         </div>
                     </div>
                 </div>
@@ -250,17 +296,44 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container text-center">
-            <p>&copy; 2024 F1 Analytics Dashboard. Advanced Performance Analysis Platform.</p>
-            <p class="small">
-                <i class="fas fa-database me-1"></i>Powered by FastF1 Data API
-                <span class="mx-2">|</span>
-                <i class="fas fa-chart-bar me-1"></i>Real-time Analytics
-                <span class="mx-2">|</span>
-                <i class="fas fa-atom me-1"></i>Quantum Modeling
-            </p>
+    <!-- Enhanced Footer -->
+    <footer class="bg-gradient text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-flag-checkered me-2"></i>F1 Analytics Platform</h5>
+                    <p class="small">Advanced Formula 1 performance analysis using cutting-edge quantum modeling, machine learning, and real-time data processing.</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Features</h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-atom me-1"></i>Quantum Performance Analysis</li>
+                        <li><i class="fas fa-chess me-1"></i>Race Strategy Optimization</li>
+                        <li><i class="fas fa-cloud-sun me-1"></i>Weather Impact Assessment</li>
+                        <li><i class="fas fa-heartbeat me-1"></i>Driver Stress Analysis</li>
+                        <li><i class="fas fa-users me-1"></i>Head-to-Head Comparisons</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Technology Stack</h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-database me-1"></i>FastF1 Official Data API</li>
+                        <li><i class="fas fa-chart-bar me-1"></i>Chart.js Visualizations</li>
+                        <li><i class="fas fa-cogs me-1"></i>Flask Backend</li>
+                        <li><i class="fas fa-brain me-1"></i>Machine Learning Models</li>
+                        <li><i class="fas fa-tachometer-alt me-1"></i>Real-time Processing</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2024 F1 Analytics Dashboard. Built with passion for Formula 1 racing.</p>
+                    <p class="small text-muted mt-2">
+                        Disclaimer: This is an independent analysis platform. Not affiliated with Formula 1, FIA, or any F1 teams.
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
 

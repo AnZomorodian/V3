@@ -80,6 +80,41 @@ body {
     transition: background-color 0.2s;
 }
 
+.hero-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 50%, #2d2d2d 100%);
+}
+
+.badge {
+    transition: transform 0.2s;
+}
+
+.badge:hover {
+    transform: translateY(-2px);
+}
+
+.weather-card {
+    border-left: 4px solid #17a2b8;
+}
+
+.comparison-card {
+    border-left: 4px solid #6f42c1;
+}
+
 .driver-row:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }

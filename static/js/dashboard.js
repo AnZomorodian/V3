@@ -85,10 +85,10 @@ function displaySuccess(message, container = 'resultsContent') {
 // Format time duration
 function formatTime(seconds) {
     if (!seconds || isNaN(seconds)) return 'N/A';
-    
+
     const minutes = Math.floor(seconds / 60);
     const secs = (seconds % 60).toFixed(3);
-    
+
     if (minutes > 0) {
         return `${minutes}:${secs.padStart(6, '0')}`;
     }
@@ -98,7 +98,7 @@ function formatTime(seconds) {
 // Format lap time from various formats
 function formatLapTime(lapTime) {
     if (!lapTime || lapTime === 'N/A') return 'N/A';
-    
+
     if (typeof lapTime === 'string') {
         // Already formatted
         if (lapTime.includes(':')) return lapTime;
@@ -108,25 +108,25 @@ function formatLapTime(lapTime) {
             return formatTime(parsed);
         }
     }
-    
+
     if (typeof lapTime === 'number') {
         return formatTime(lapTime);
     }
-    
+
     return lapTime.toString();
 }
 
 // Get tire compound CSS class
 function getTireCompoundClass(compound) {
     if (!compound) return 'tire-unknown';
-    
+
     const compoundUpper = compound.toString().toUpperCase();
     if (compoundUpper.includes('SOFT')) return 'tire-soft';
     if (compoundUpper.includes('MEDIUM')) return 'tire-medium';
     if (compoundUpper.includes('HARD')) return 'tire-hard';
     if (compoundUpper.includes('INTERMEDIATE')) return 'tire-intermediate';
     if (compoundUpper.includes('WET')) return 'tire-wet';
-    
+
     return 'tire-unknown';
 }
 
@@ -152,17 +152,17 @@ async function makeAPICall(endpoint, data) {
             },
             body: JSON.stringify(data)
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const result = await response.json();
-        
+
         if (result.error) {
             throw new Error(result.error);
         }
-        
+
         return result;
     } catch (error) {
         console.error('API call failed:', error);
@@ -178,16 +178,16 @@ async function makeAPICall(endpoint, data) {
 async function runQuantumAnalysis() {
     currentAnalysisType = 'quantum';
     showLoading();
-    
+
     try {
         const params = getFormParameters();
         const result = await makeAPICall('/api/quantum-analysis', params);
-        
+
         currentResults = result;
         displayQuantumResults(result);
         showChartsSection();
         createQuantumCharts(result);
-        
+
     } catch (error) {
         displayError(`Quantum analysis failed: ${error.message}`);
     } finally {
@@ -199,16 +199,16 @@ async function runQuantumAnalysis() {
 async function runRaceStrategy() {
     currentAnalysisType = 'strategy';
     showLoading();
-    
+
     try {
         const params = getFormParameters();
         const result = await makeAPICall('/api/race-strategy', params);
-        
+
         currentResults = result;
         displayStrategyResults(result);
         showChartsSection();
         createStrategyCharts(result);
-        
+
     } catch (error) {
         displayError(`Race strategy analysis failed: ${error.message}`);
     } finally {
@@ -220,16 +220,16 @@ async function runRaceStrategy() {
 async function runRealtimeAnalysis() {
     currentAnalysisType = 'realtime';
     showLoading();
-    
+
     try {
         const params = getFormParameters();
         const result = await makeAPICall('/api/realtime-status', params);
-        
+
         currentResults = result;
         displayRealtimeResults(result);
         showChartsSection();
         createRealtimeCharts(result);
-        
+
     } catch (error) {
         displayError(`Real-time analysis failed: ${error.message}`);
     } finally {
@@ -241,16 +241,16 @@ async function runRealtimeAnalysis() {
 async function runStressAnalysis() {
     currentAnalysisType = 'stress';
     showLoading();
-    
+
     try {
         const params = getFormParameters();
         const result = await makeAPICall('/api/stress-analysis', params);
-        
+
         currentResults = result;
         displayStressResults(result);
         showChartsSection();
         createStressCharts(result);
-        
+
     } catch (error) {
         displayError(`Stress analysis failed: ${error.message}`);
     } finally {
@@ -262,16 +262,16 @@ async function runStressAnalysis() {
 async function runAdvancedAnalysis() {
     currentAnalysisType = 'advanced';
     showLoading();
-    
+
     try {
         const params = getFormParameters();
         const result = await makeAPICall('/api/advanced-analysis', params);
-        
+
         currentResults = result;
         displayAdvancedResults(result);
         showChartsSection();
         createAdvancedCharts(result);
-        
+
     } catch (error) {
         displayError(`Advanced analysis failed: ${error.message}`);
     } finally {
@@ -286,13 +286,13 @@ async function runAdvancedAnalysis() {
 // Display Quantum Analysis Results
 function displayQuantumResults(data) {
     const container = document.getElementById('resultsContent');
-    
+
     let html = `
         <div class="fade-in">
             <h4><i class="fas fa-atom me-2 text-primary"></i>Quantum Performance Analysis Results</h4>
             <div class="row">
     `;
-    
+
     // Quantum Lap Optimization
     if (data.quantum_lap_optimization && data.quantum_lap_optimization.quantum_states) {
         html += `
@@ -303,7 +303,7 @@ function displayQuantumResults(data) {
                     </div>
                     <div class="card-body">
         `;
-        
+
         Object.entries(data.quantum_lap_optimization.quantum_states).forEach(([driver, state]) => {
             html += `
                 <div class="driver-row">
@@ -339,14 +339,14 @@ function displayQuantumResults(data) {
                 </div>
             `;
         });
-        
+
         html += `
                     </div>
                 </div>
             </div>
         `;
     }
-    
+
     // Multiverse Strategy Analysis
     if (data.multiverse_strategy_modeling && data.multiverse_strategy_modeling.quantum_strategy_selection) {
         html += `
@@ -357,7 +357,7 @@ function displayQuantumResults(data) {
                     </div>
                     <div class="card-body">
         `;
-        
+
         Object.entries(data.multiverse_strategy_modeling.quantum_strategy_selection).forEach(([driver, strategy]) => {
             html += `
                 <div class="driver-row">
@@ -373,32 +373,32 @@ function displayQuantumResults(data) {
                 </div>
             `;
         });
-        
+
         html += `
                     </div>
                 </div>
             </div>
         `;
     }
-    
+
     html += `
             </div>
         </div>
     `;
-    
+
     container.innerHTML = html;
 }
 
 // Display Strategy Results
 function displayStrategyResults(data) {
     const container = document.getElementById('resultsContent');
-    
+
     let html = `
         <div class="fade-in">
             <h4><i class="fas fa-chess me-2 text-success"></i>Race Strategy Analysis Results</h4>
             <div class="row">
     `;
-    
+
     // Pit Stop Analysis
     if (data.pit_stop_analysis) {
         html += `
@@ -421,7 +421,7 @@ function displayStrategyResults(data) {
                                 </thead>
                                 <tbody>
         `;
-        
+
         Object.entries(data.pit_stop_analysis).forEach(([driver, analysis]) => {
             html += `
                 <tr>
@@ -437,7 +437,7 @@ function displayStrategyResults(data) {
                 </tr>
             `;
         });
-        
+
         html += `
                                 </tbody>
                             </table>
@@ -447,7 +447,7 @@ function displayStrategyResults(data) {
             </div>
         `;
     }
-    
+
     // Strategy Effectiveness
     if (data.strategy_effectiveness) {
         html += `
@@ -458,12 +458,12 @@ function displayStrategyResults(data) {
                     </div>
                     <div class="card-body">
         `;
-        
+
         Object.entries(data.strategy_effectiveness).forEach(([driver, effectiveness]) => {
             const positionChange = effectiveness.position_change;
             const changeClass = positionChange > 0 ? 'text-success' : positionChange < 0 ? 'text-danger' : 'text-muted';
             const changeIcon = positionChange > 0 ? 'fa-arrow-up' : positionChange < 0 ? 'fa-arrow-down' : 'fa-minus';
-            
+
             html += `
                 <div class="driver-row">
                     <div class="d-flex justify-content-between align-items-center">
@@ -493,31 +493,31 @@ function displayStrategyResults(data) {
                 </div>
             `;
         });
-        
+
         html += `
                     </div>
                 </div>
             </div>
         `;
     }
-    
+
     html += `
             </div>
         </div>
     `;
-    
+
     container.innerHTML = html;
 }
 
 // Display Real-time Results
 function displayRealtimeResults(data) {
     const container = document.getElementById('resultsContent');
-    
+
     let html = `
         <div class="fade-in">
             <h4><i class="fas fa-broadcast-tower me-2 text-info"></i>Real-time Session Status</h4>
     `;
-    
+
     if (data.status === 'live' && data.live_standings) {
         html += `
             <div class="row">
@@ -544,7 +544,7 @@ function displayRealtimeResults(data) {
                                     </thead>
                                     <tbody>
         `;
-        
+
         data.live_standings.forEach(standing => {
             html += `
                 <tr>
@@ -569,7 +569,7 @@ function displayRealtimeResults(data) {
                 </tr>
             `;
         });
-        
+
         html += `
                                     </tbody>
                                 </table>
@@ -587,7 +587,7 @@ function displayRealtimeResults(data) {
             </div>
         `;
     }
-    
+
     html += `</div>`;
     container.innerHTML = html;
 }
@@ -596,12 +596,12 @@ function displayRealtimeResults(data) {
 function displayStressResults(data) {
     const container = document.getElementById('resultsContent');
     const driver = getFormParameters().driver;
-    
+
     let html = `
         <div class="fade-in">
             <h4><i class="fas fa-heartbeat me-2 text-warning"></i>Driver Stress Analysis: ${driver}</h4>
     `;
-    
+
     if (data.error) {
         html += `
             <div class="alert alert-danger">
@@ -614,7 +614,7 @@ function displayStressResults(data) {
         if (data.overall_stress_index) {
             const stressIndex = data.overall_stress_index.index || 0;
             const stressRating = data.overall_stress_index.rating || 'unknown';
-            
+
             html += `
                 <div class="row mb-4">
                     <div class="col-md-4">
@@ -630,7 +630,7 @@ function displayStressResults(data) {
                         </div>
                     </div>
             `;
-            
+
             // Sector Stress Analysis
             if (data.sector_stress_analysis) {
                 html += `
@@ -642,7 +642,7 @@ function displayStressResults(data) {
                             <div class="card-body">
                                 <div class="row">
                 `;
-                
+
                 Object.entries(data.sector_stress_analysis).forEach(([sector, analysis]) => {
                     if (sector !== 'error') {
                         html += `
@@ -656,7 +656,7 @@ function displayStressResults(data) {
                         `;
                     }
                 });
-                
+
                 html += `
                                 </div>
                             </div>
@@ -666,7 +666,7 @@ function displayStressResults(data) {
                 `;
             }
         }
-        
+
         // Consistency Analysis
         if (data.consistency_stress && !data.consistency_stress.error) {
             html += `
@@ -711,7 +711,7 @@ function displayStressResults(data) {
             `;
         }
     }
-    
+
     html += `</div>`;
     container.innerHTML = html;
 }
@@ -719,12 +719,12 @@ function displayStressResults(data) {
 // Display Advanced Analysis Results
 function displayAdvancedResults(data) {
     const container = document.getElementById('resultsContent');
-    
+
     let html = `
         <div class="fade-in">
             <h4><i class="fas fa-cogs me-2 text-secondary"></i>Advanced Session Analysis</h4>
     `;
-    
+
     if (!data) {
         html += `
             <div class="alert alert-warning">
@@ -756,7 +756,7 @@ function displayAdvancedResults(data) {
                                         </thead>
                                         <tbody>
             `;
-            
+
             Object.entries(data.performance_analysis).forEach(([driver, metrics]) => {
                 html += `
                     <tr>
@@ -768,7 +768,7 @@ function displayAdvancedResults(data) {
                     </tr>
                 `;
             });
-            
+
             html += `
                                         </tbody>
                                     </table>
@@ -779,7 +779,7 @@ function displayAdvancedResults(data) {
                 </div>
             `;
         }
-        
+
         // Consistency Analysis
         if (data.consistency_analysis) {
             html += `
@@ -792,7 +792,7 @@ function displayAdvancedResults(data) {
                             <div class="card-body">
                                 <div class="row">
             `;
-            
+
             Object.entries(data.consistency_analysis).forEach(([driver, consistency]) => {
                 html += `
                     <div class="col-md-4 mb-3">
@@ -807,7 +807,7 @@ function displayAdvancedResults(data) {
                     </div>
                 `;
             });
-            
+
             html += `
                                 </div>
                             </div>
@@ -817,9 +817,138 @@ function displayAdvancedResults(data) {
             `;
         }
     }
-    
+
     html += `</div>`;
     container.innerHTML = html;
+}
+
+// Display Weather Results
+function displayWeatherResults(data) {
+    const container = document.getElementById('weatherContent');
+
+    let html = `
+        <div class="fade-in">
+            <h4><i class="fas fa-cloud-sun me-2 text-info"></i>Weather Impact Analysis</h4>
+            <div class="row">
+    `;
+
+    if (data.weather_conditions) {
+        html += `
+            <div class="col-md-6">
+                <div class="card weather-card mb-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-thermometer-half me-2"></i>Track Conditions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="metric-card">
+                                    <div class="metric-value">${data.weather_conditions.avg_air_temp}°C</div>
+                                    <div class="metric-label">Air Temperature</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-card">
+                                    <div class="metric-value">${data.weather_conditions.avg_track_temp}°C</div>
+                                    <div class="metric-label">Track Temperature</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+// Display Comparison Results
+function displayComparisonResults(data) {
+    const container = document.getElementById('comparisonContent');
+
+    let html = `
+        <div class="fade-in">
+            <h4><i class="fas fa-users me-2 text-warning"></i>Driver Head-to-Head Comparison</h4>
+            <div class="row">
+    `;
+
+    if (data.comparison_data) {
+        html += `
+            <div class="col-12">
+                <div class="card comparison-card mb-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-balance-scale me-2"></i>Performance Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Driver</th>
+                                        <th>Best Lap</th>
+                                        <th>Avg Lap</th>
+                                        <th>Top Speed</th>
+                                        <th>Position</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+        `;
+
+        data.comparison_data.forEach(driver => {
+            html += `
+                <tr>
+                    <td><strong>${driver.driver}</strong></td>
+                    <td>${formatLapTime(driver.best_lap)}</td>
+                    <td>${formatLapTime(driver.avg_lap)}</td>
+                    <td>${driver.top_speed} km/h</td>
+                    <td>${driver.position}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+// Show sections
+function showWeatherSection() {
+    document.getElementById('weatherSection').style.display = 'block';
+    document.getElementById('weatherSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showComparisonSection() {
+    document.getElementById('comparisonSection').style.display = 'block';
+    document.getElementById('comparisonSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Utility Functions
+function showLoading() {
+    document.getElementById('loadingIndicator').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function hideLoading() {
+    document.getElementById('loadingIndicator').style.display = 'none';
 }
 
 /**
@@ -846,7 +975,7 @@ function destroyExistingCharts() {
 // Create Quantum Charts
 function createQuantumCharts(data) {
     destroyExistingCharts();
-    
+
     // Performance Chart
     if (data.quantum_lap_optimization && data.quantum_lap_optimization.quantum_states) {
         const ctx = document.getElementById('performanceChart').getContext('2d');
@@ -854,7 +983,7 @@ function createQuantumCharts(data) {
         const efficiencyScores = drivers.map(driver => 
             data.quantum_lap_optimization.quantum_states[driver].quantum_efficiency_score * 100
         );
-        
+
         performanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -909,7 +1038,7 @@ function createQuantumCharts(data) {
 // Create Strategy Charts
 function createStrategyCharts(data) {
     destroyExistingCharts();
-    
+
     // Strategy Effectiveness Chart
     if (data.strategy_effectiveness) {
         const ctx = document.getElementById('performanceChart').getContext('2d');
@@ -917,7 +1046,7 @@ function createStrategyCharts(data) {
         const effectiveness = drivers.map(driver => 
             data.strategy_effectiveness[driver].effectiveness_rating
         );
-        
+
         performanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -967,17 +1096,15 @@ function createStrategyCharts(data) {
             }
         });
     }
-}
-
 // Create Real-time Charts
 function createRealtimeCharts(data) {
     destroyExistingCharts();
-    
+
     if (data.live_standings) {
         const ctx = document.getElementById('performanceChart').getContext('2d');
         const drivers = data.live_standings.map(s => s.driver);
         const positions = data.live_standings.map(s => s.position);
-        
+
         performanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -1034,7 +1161,7 @@ function createRealtimeCharts(data) {
 // Create Stress Charts
 function createStressCharts(data) {
     destroyExistingCharts();
-    
+
     // Sector Stress Chart
     if (data.sector_stress_analysis) {
         const ctx = document.getElementById('performanceChart').getContext('2d');
@@ -1042,7 +1169,7 @@ function createStressCharts(data) {
         const stressValues = sectors.map(sector => 
             data.sector_stress_analysis[sector].stress_index
         );
-        
+
         performanceChart = new Chart(ctx, {
             type: 'radar',
             data: {
@@ -1097,7 +1224,7 @@ function createStressCharts(data) {
 // Create Advanced Charts
 function createAdvancedCharts(data) {
     destroyExistingCharts();
-    
+
     // Performance Metrics Chart
     if (data.performance_analysis) {
         const ctx = document.getElementById('performanceChart').getContext('2d');
@@ -1105,7 +1232,7 @@ function createAdvancedCharts(data) {
         const lapCounts = drivers.map(driver => 
             data.performance_analysis[driver].total_laps
         );
-        
+
         performanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -1184,71 +1311,6 @@ function showConsistencyDetails() {
  * Analysis History Functions
  */
 
-// Load analysis history
-async function loadAnalysisHistory() {
-    try {
-        const response = await fetch('/api/analysis-history');
-        const history = await response.json();
-        
-        displayAnalysisHistory(history);
-    } catch (error) {
-        displayError('Failed to load analysis history: ' + error.message, 'historyContent');
-    }
-}
-
-// Display analysis history
-function displayAnalysisHistory(history) {
-    const container = document.getElementById('historyContent');
-    
-    if (!history || history.length === 0) {
-        container.innerHTML = `
-            <div class="text-center text-muted">
-                <i class="fas fa-history fa-2x mb-2"></i>
-                <p>No analysis history available</p>
-            </div>
-        `;
-        return;
-    }
-    
-    let html = `
-        <div class="table-responsive">
-            <table class="table data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Year</th>
-                        <th>Grand Prix</th>
-                        <th>Session</th>
-                        <th>Analysis Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `;
-    
-    history.forEach(item => {
-        const date = new Date(item.created_at).toLocaleString();
-        html += `
-            <tr>
-                <td>${date}</td>
-                <td>${item.year}</td>
-                <td>${item.grand_prix}</td>
-                <td>${item.session}</td>
-                <td>
-                    <span class="badge bg-secondary">${item.analysis_type}</span>
-                </td>
-            </tr>
-        `;
-    });
-    
-    html += `
-                </tbody>
-            </table>
-        </div>
-    `;
-    
-    container.innerHTML = html;
-}
-
 /**
  * Export Functions
  */
@@ -1259,13 +1321,13 @@ function exportResults() {
         alert('No results to export. Please run an analysis first.');
         return;
     }
-    
+
     const params = getFormParameters();
     const filename = `f1_analysis_${currentAnalysisType}_${params.year}_${params.grand_prix}_${params.session}.json`;
-    
+
     const dataStr = JSON.stringify(currentResults, null, 2);
     const dataBlob = new Blob([dataStr], {type: 'application/json'});
-    
+
     const link = document.createElement('a');
     link.href = URL.createObjectURL(dataBlob);
     link.download = filename;
@@ -1279,10 +1341,7 @@ function exportResults() {
 // Initialize dashboard on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('F1 Analytics Dashboard initialized');
-    
-    // Load initial analysis history
-    loadAnalysisHistory();
-    
+
     // Set up periodic refresh for real-time data (if needed)
     // This could be implemented later for true real-time updates
 });

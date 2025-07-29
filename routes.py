@@ -194,15 +194,62 @@ def streaming_data():
         logger.error(f"Error in streaming data: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/analysis-history', methods=['GET'])
-def analysis_history():
-    """Get analysis request history"""
+@app.route('/api/weather-analysis', methods=['POST'])
+def weather_analysis():
+    """Weather impact analysis endpoint"""
     try:
-        requests = AnalysisRequest.query.order_by(AnalysisRequest.created_at.desc()).limit(50).all()
-        return jsonify([req.to_dict() for req in requests])
+        data = request.get_json()
+        year = data.get('year')
+        grand_prix = data.get('grand_prix')
+        session = data.get('session', 'Race')
+        
+        if not year or not grand_prix:
+            return jsonify({'error': 'Year and grand_prix are required'}), 400
+        
+        # Log the request
+        analysis_request = AnalysisRequest(
+            year=year,
+            grand_prix=grand_prix,
+            session=session,
+            analysis_type='weather_analysis'
+        )
+        db.session.add(analysis_request)
+        db.session.commit()
+        
+        result = advanced_analytics.analyze_weather_impact(year, grand_prix, session)
+        return jsonify(result)
         
     except Exception as e:
-        logger.error(f"Error getting analysis history: {str(e)}")
+        logger.error(f"Error in weather analysis: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/driver-comparison', methods=['POST'])
+def driver_comparison():
+    """Driver head-to-head comparison endpoint"""
+    try:
+        data = request.get_json()
+        year = data.get('year')
+        grand_prix = data.get('grand_prix')
+        session = data.get('session', 'Race')
+        
+        if not year or not grand_prix:
+            return jsonify({'error': 'Year and grand_prix are required'}), 400
+        
+        # Log the request
+        analysis_request = AnalysisRequest(
+            year=year,
+            grand_prix=grand_prix,
+            session=session,
+            analysis_type='driver_comparison'
+        )
+        db.session.add(analysis_request)
+        db.session.commit()
+        
+        result = advanced_analytics.compare_drivers(year, grand_prix, session)
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Error in driver comparison: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.errorhandler(404)
