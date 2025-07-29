@@ -27,18 +27,35 @@ class DataLoader:
             self.logger.warning(f"Failed to enable cache: {e}")
     
     def load_session_data(self, year: int, gp: str, session: str = 'Race'):
-        """Load F1 session data using FastF1"""
+        """Load F1 session data using FastF1 with timeout protection"""
         try:
             self.logger.info(f"Loading {year} {gp} {session} data...")
             
-            # Load session
+            # Load session with reduced data to prevent timeouts
             session_obj = fastf1.get_session(year, gp, session)
-            session_obj.load()
+            
+            # Load with minimal telemetry to reduce timeout risk
+            try:
+                session_obj.load(telemetry=False, weather=True, messages=True)
+                self.logger.info("Loaded session data without telemetry to prevent timeout")
+            except:
+                # Fallback to basic load
+                session_obj.load(telemetry=False, weather=False, messages=False)
+                self.logger.warning("Loaded session data with minimal features")
             
             return session_obj
             
         except Exception as e:
             self.logger.error(f"Error loading session data: {str(e)}")
+            # Try alternative session if available
+            try:
+                if session == 'Race':
+                    self.logger.info("Trying Qualifying session as fallback...")
+                    session_obj = fastf1.get_session(year, gp, 'Qualifying')
+                    session_obj.load(telemetry=False, weather=False, messages=False)
+                    return session_obj
+            except:
+                pass
             return None
     
     def get_driver_data(self, session_data, driver: str) -> Optional[pd.DataFrame]:

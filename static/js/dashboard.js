@@ -313,6 +313,7 @@ async function runDriverComparison() {
         showComparisonSection();
 
     } catch (error) {
+        console.error('Driver comparison error:', error);
         displayError(`Driver comparison failed: ${error.message}`);
     } finally {
         hideLoading();

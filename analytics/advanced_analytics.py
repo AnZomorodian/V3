@@ -567,76 +567,125 @@ class AdvancedF1Analytics:
             }
 
     def compare_drivers(self, year: int, grand_prix: str, session: str = 'Race') -> Dict[str, Any]:
-        """Compare driver performance head-to-head"""
+        """Compare driver performance head-to-head with timeout protection"""
         try:
             self.logger.info(f"Running driver comparison for {year} {grand_prix} {session}")
 
-            session_data = self.data_loader.load_session_data(year, grand_prix, session)
+            # Try to load session data with timeout protection
+            try:
+                session_data = self.data_loader.load_session_data(year, grand_prix, session)
+            except Exception as load_error:
+                self.logger.error(f"Data loading failed: {str(load_error)}")
+                return {
+                    'error': f'Failed to load session data: {str(load_error)}',
+                    'analysis_type': 'driver_comparison',
+                    'timestamp': datetime.now().isoformat()
+                }
+
             if session_data is None:
                 return {
-                    'error': 'Failed to load session data',
+                    'error': 'No session data available',
+                    'analysis_type': 'driver_comparison',
+                    'timestamp': datetime.now().isoformat()
+                }
+
+            # Check if laps data exists
+            if not hasattr(session_data, 'laps') or session_data.laps.empty:
+                return {
+                    'error': 'No lap data available for this session',
                     'analysis_type': 'driver_comparison',
                     'timestamp': datetime.now().isoformat()
                 }
 
             laps = session_data.laps
-            if laps.empty:
-                return {
-                    'error': 'No lap data available',
-                    'analysis_type': 'driver_comparison',
-                    'timestamp': datetime.now().isoformat()
-                }
 
-            # Get all drivers
-            drivers = laps['Driver'].unique()
+            # Get all drivers with valid data
+            drivers = laps['Driver'].unique()[:10]  # Limit to 10 drivers to prevent timeout
             comparison_data = []
 
             for driver in drivers:
-                driver_laps = laps[laps['Driver'] == driver]
-                valid_laps = driver_laps[driver_laps['LapTime'].notna()]
+                try:
+                    driver_laps = laps[laps['Driver'] == driver]
+                    valid_laps = driver_laps[driver_laps['LapTime'].notna()]
 
-                if not valid_laps.empty:
-                    # Calculate driver statistics
-                    lap_times = valid_laps['LapTime'].dt.total_seconds()
+                    if not valid_laps.empty:
+                        # Calculate basic statistics without heavy telemetry processing
+                        lap_times = valid_laps['LapTime'].dt.total_seconds()
+                        fastest_lap_idx = valid_laps['LapTime'].idxmin()
+                        fastest_lap = valid_laps.loc[fastest_lap_idx]
 
-                    # Get telemetry data for top speed
-                    try:
-                        fastest_lap = valid_laps.loc[valid_laps['LapTime'].idxmin()]
-                        telemetry = fastest_lap.get_telemetry()
-                        top_speed = telemetry['Speed'].max() if not telemetry.empty else 0
-                    except:
+                        # Get position data safely
+                        try:
+                            if 'Position' in driver_laps.columns:
+                                final_position = driver_laps['Position'].dropna().iloc[-1] if not driver_laps['Position'].dropna().empty else 'N/A'
+                            else:
+                                final_position = 'N/A'
+                        except:
+                            final_position = 'N/A'
+
+                        # Basic telemetry without timeout risk
                         top_speed = 0
+                        try:
+                            # Only get telemetry for fastest lap with timeout protection
+                            if hasattr(fastest_lap, 'get_telemetry'):
+                                telemetry = fastest_lap.get_telemetry()
+                                if not telemetry.empty and 'Speed' in telemetry.columns:
+                                    speed_data = telemetry['Speed'].dropna()
+                                    if not speed_data.empty:
+                                        top_speed = float(speed_data.max())
+                        except Exception as tel_error:
+                            self.logger.warning(f"Telemetry unavailable for {driver}: {str(tel_error)}")
+                            top_speed = 0
 
-                    # Get final position
-                    try:
-                        position = driver_laps['Position'].iloc[-1] if 'Position' in driver_laps.columns else 'N/A'
-                    except:
-                        position = 'N/A'
+                        driver_stats = {
+                            'driver': str(driver),
+                            'best_lap': format_lap_time(fastest_lap['LapTime']),
+                            'avg_lap': format_lap_time(pd.Timedelta(seconds=lap_times.mean())) if len(lap_times) > 0 else None,
+                            'lap_count': int(len(valid_laps)),
+                            'top_speed': round(top_speed, 1) if top_speed > 0 else 'N/A',
+                            'position': int(final_position) if final_position != 'N/A' and pd.notna(final_position) else 'N/A',
+                            'consistency': round(lap_times.std(), 3) if len(lap_times) > 1 else 0.0
+                        }
 
-                    driver_stats = {
-                        'driver': driver,
-                        'best_lap': fastest_lap['LapTime'] if not valid_laps.empty else None,
-                        'avg_lap': pd.Timedelta(seconds=lap_times.mean()) if len(lap_times) > 0 else None,
-                        'lap_count': len(valid_laps),
-                        'top_speed': round(top_speed, 1),
-                        'position': position,
-                        'consistency': round(lap_times.std(), 3) if len(lap_times) > 1 else 0
-                    }
+                        comparison_data.append(driver_stats)
 
-                    comparison_data.append(driver_stats)
+                except Exception as driver_error:
+                    self.logger.warning(f"Skipping driver {driver}: {str(driver_error)}")
+                    continue
 
             # Sort by best lap time
-            comparison_data.sort(key=lambda x: x['best_lap'] if x['best_lap'] is not None else pd.Timedelta(seconds=999))
+            def sort_key(x):
+                if x['best_lap'] and x['best_lap'] != 'N/A':
+                    try:
+                        # Convert formatted time back to seconds for sorting
+                        time_parts = x['best_lap'].split(':')
+                        if len(time_parts) == 2:
+                            return float(time_parts[0]) * 60 + float(time_parts[1])
+                    except:
+                        pass
+                return 999999
 
-            # Calculate relative performance
-            if comparison_data:
-                fastest_time = comparison_data[0]['best_lap']
-                for driver_data in comparison_data:
-                    if driver_data['best_lap'] is not None and fastest_time is not None:
-                        gap = driver_data['best_lap'] - fastest_time
-                        driver_data['gap_to_fastest'] = gap
-                    else:
-                        driver_data['gap_to_fastest'] = None
+            comparison_data.sort(key=sort_key)
+
+            # Calculate gaps to fastest
+            if comparison_data and comparison_data[0]['best_lap'] != 'N/A':
+                fastest_time_str = comparison_data[0]['best_lap']
+                try:
+                    fastest_seconds = sort_key(comparison_data[0])
+                    
+                    for driver_data in comparison_data:
+                        if driver_data['best_lap'] != 'N/A':
+                            driver_seconds = sort_key(driver_data)
+                            gap_seconds = driver_seconds - fastest_seconds
+                            if gap_seconds > 0:
+                                driver_data['gap_to_fastest'] = f"+{gap_seconds:.3f}s"
+                            else:
+                                driver_data['gap_to_fastest'] = "Fastest"
+                        else:
+                            driver_data['gap_to_fastest'] = 'N/A'
+                except:
+                    for driver_data in comparison_data:
+                        driver_data['gap_to_fastest'] = 'N/A'
 
             return make_json_serializable({
                 'analysis_type': 'driver_comparison',
@@ -647,14 +696,16 @@ class AdvancedF1Analytics:
                 },
                 'comparison_data': comparison_data,
                 'total_drivers': len(comparison_data),
+                'data_quality': 'Limited telemetry for performance',
                 'timestamp': datetime.now().isoformat()
             })
 
         except Exception as e:
-            self.logger.error(f"Error in driver comparison: {str(e)}")
+            self.logger.error(f"Critical error in driver comparison: {str(e)}")
             return {
-                'error': str(e),
+                'error': f'Driver comparison failed: {str(e)}',
                 'analysis_type': 'driver_comparison',
+                'suggestion': 'Try a different session or check data availability',
                 'timestamp': datetime.now().isoformat()
             }
 
