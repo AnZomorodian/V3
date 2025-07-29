@@ -30,6 +30,9 @@ def make_json_serializable(obj: Any) -> Any:
         if isinstance(obj, (np.integer, np.int64, np.int32)):
             return int(obj)
         if isinstance(obj, (np.floating, np.float64, np.float32)):
+            # Handle NaN values
+            if np.isnan(obj):
+                return None
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()

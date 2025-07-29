@@ -38,28 +38,30 @@ SESSION_TYPES = [
     'Race'
 ]
 
-# Driver abbreviations to full names mapping
+# Driver abbreviations to full names mapping (2025 Season)
 DRIVER_MAPPING = {
     'VER': 'Max Verstappen',
+    'PER': 'Sergio Perez',
     'HAM': 'Lewis Hamilton',
+    'RUS': 'George Russell',  
     'LEC': 'Charles Leclerc',
     'SAI': 'Carlos Sainz',
-    'RUS': 'George Russell',
     'NOR': 'Lando Norris',
     'PIA': 'Oscar Piastri',
     'ALO': 'Fernando Alonso',
     'STR': 'Lance Stroll',
     'ALB': 'Alexander Albon',
-    'SAR': 'Logan Sargeant',
+    'COL': 'Franco Colapinto',
     'TSU': 'Yuki Tsunoda',
-    'RIC': 'Daniel Ricciardo',
+    'LAW': 'Liam Lawson',
     'BOT': 'Valtteri Bottas',
     'ZHO': 'Guanyu Zhou',
     'MAG': 'Kevin Magnussen',
     'HUL': 'Nico Hulkenberg',
     'GAS': 'Pierre Gasly',
     'OCO': 'Esteban Ocon',
-    'PER': 'Sergio Perez'
+    'BEA': 'Oliver Bearman',
+    'HAD': 'Jack Doohan'
 }
 
 # Grand Prix locations

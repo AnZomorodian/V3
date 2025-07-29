@@ -28,10 +28,14 @@ class QuantumF1Analytics:
                 return {'error': 'Session data not available'}
             
             laps = session_data.laps
-            telemetry = session_data.tel if hasattr(session_data, 'tel') else pd.DataFrame()
+            # Get telemetry data if available
+            try:
+                telemetry = session_data.car_data if hasattr(session_data, 'car_data') else pd.DataFrame()
+            except Exception:
+                telemetry = pd.DataFrame()
             
             analysis = {
-                'quantum_lap_optimization': self._quantum_lap_analysis(laps, telemetry),
+                'quantum_lap_optimization': self._quantum_lap_optimization(laps, telemetry),
                 'multiverse_strategy_modeling': self._multiverse_strategy_analysis(laps),
                 'probability_wave_predictions': self._probability_wave_modeling(laps),
                 'entanglement_driver_analysis': self._entanglement_analysis(laps),
