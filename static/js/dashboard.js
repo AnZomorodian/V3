@@ -945,6 +945,7 @@ function displayComparisonResults(data) {
                                         <th>Driver</th>
                                         <th>Best Lap</th>
                                         <th>Avg Lap</th>
+                                        <th>Gap to Fastest</th>
                                         <th>Top Speed</th>
                                         <th>Position</th>
                                     </tr>
@@ -958,7 +959,8 @@ function displayComparisonResults(data) {
                     <td><strong>${driver.driver}</strong></td>
                     <td>${formatLapTime(driver.best_lap)}</td>
                     <td>${formatLapTime(driver.avg_lap)}</td>
-                    <td>${driver.top_speed} km/h</td>
+                    <td>${driver.gap_to_fastest || 'N/A'}</td>
+                    <td>${driver.top_speed !== 'N/A' && driver.top_speed ? driver.top_speed + ' km/h' : 'N/A'}</td>
                     <td>${driver.position}</td>
                 </tr>
             `;

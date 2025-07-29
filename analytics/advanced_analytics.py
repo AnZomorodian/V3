@@ -600,7 +600,7 @@ class AdvancedF1Analytics:
             laps = session_data.laps
 
             # Get all drivers with valid data
-            drivers = laps['Driver'].unique()[:10]  # Limit to 10 drivers to prevent timeout
+            drivers = laps['Driver'].unique()  # Show all drivers in the GP
             comparison_data = []
 
             for driver in drivers:

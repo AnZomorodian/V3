@@ -658,8 +658,8 @@ footer {
     box-shadow: 0 0 20px rgba(0, 210, 190, 0.4);
 }
 
-/* Footer Styles */
-.footer {
+/* Enhanced Footer Styles */
+footer {
     background: linear-gradient(135deg, #0d1421 0%, #1e3c72 50%, #2a5298 100%);
     color: white;
     padding: 50px 0 0 0;
@@ -668,7 +668,7 @@ footer {
     overflow: hidden;
 }
 
-.footer::before {
+footer::before {
     content: '';
     position: absolute;
     top: 0;
@@ -875,4 +875,89 @@ footer {
         flex-direction: row;
         justify-content: space-between;
     }
+}
+
+/* Additional Enhancement Classes */
+.analysis-card {
+    border-left: 4px solid var(--f1-red);
+}
+
+.quantum-card {
+    border-left: 4px solid var(--f1-blue);
+}
+
+.strategy-card {
+    border-left: 4px solid var(--f1-green);
+}
+
+.stress-card {
+    border-left: 4px solid var(--f1-orange);
+}
+
+.weather-card {
+    border-left: 4px solid #17a2b8;
+}
+
+.comparison-card {
+    border-left: 4px solid var(--f1-purple);
+}
+
+/* Glow Effects */
+.glow-red {
+    box-shadow: 0 0 20px rgba(225, 6, 0, 0.4);
+}
+
+.glow-blue {
+    box-shadow: 0 0 20px rgba(0, 144, 255, 0.4);
+}
+
+.glow-green {
+    box-shadow: 0 0 20px rgba(0, 210, 190, 0.4);
+}
+
+/* Enhanced Footer Styles */
+footer {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d1117 100%);
+    border-top: 2px solid var(--accent-color);
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d1117 100%) !important;
+}
+
+.social-links a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+footer ul li {
+    margin-bottom: 8px;
+}
+
+footer ul li a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer ul li a:hover {
+    color: var(--accent-color) !important;
+}
+
+.performance-indicator {
+    padding: 10px 20px;
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    display: inline-block;
 }
