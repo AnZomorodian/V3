@@ -34,7 +34,7 @@ class AdvancedF1Analytics:
             performance_data = {}
 
             for driver in session_data.drivers:
-                driver_laps = session_data.laps.pick_drivers(driver)
+                driver_laps = session_data.laps.pick_driver(driver)
                 if driver_laps.empty:
                     continue
 
@@ -72,7 +72,7 @@ class AdvancedF1Analytics:
             consistency_data = {}
 
             for driver in session_data.drivers:
-                driver_laps = session_data.laps.pick_drivers(driver)
+                driver_laps = session_data.laps.pick_driver(driver)
                 if len(driver_laps) < 3:  # Need minimum laps for consistency analysis
                     continue
 
@@ -101,7 +101,7 @@ class AdvancedF1Analytics:
             degradation_data = {}
 
             for driver in session_data.drivers:
-                driver_laps = session_data.laps.pick_drivers(driver)
+                driver_laps = session_data.laps.pick_driver(driver)
                 if driver_laps.empty:
                     continue
 
@@ -151,7 +151,7 @@ class AdvancedF1Analytics:
             sector_data = {}
 
             for driver in session_data.drivers:
-                driver_laps = session_data.laps.pick_drivers(driver)
+                driver_laps = session_data.laps.pick_driver(driver)
                 if driver_laps.empty:
                     continue
 
@@ -187,7 +187,7 @@ class AdvancedF1Analytics:
             race_data = {}
 
             for driver in session_data.drivers:
-                driver_laps = session_data.laps.pick_drivers(driver)
+                driver_laps = session_data.laps.pick_driver(driver)
                 if driver_laps.empty:
                     continue
 
