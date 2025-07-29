@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Analytics Dashboard</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-flag-checkered me-2"></i>
+                F1 Analytics Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analysis-controls">
+                            <i class="fas fa-cog me-1"></i>Controls
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#results">
+                            <i class="fas fa-chart-line me-1"></i>Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#history">
+                            <i class="fas fa-history me-1"></i>History
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="card-title">
+                            <i class="fas fa-rocket me-2 text-primary"></i>
+                            Advanced F1 Performance Analytics
+                        </h1>
+                        <p class="card-text">Comprehensive analysis using quantum modeling, race strategy insights, and real-time analytics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Controls -->
+        <div class="row mb-4" id="analysis-controls">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-sliders-h me-2"></i>Analysis Parameters</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="analysisForm">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="year" class="form-label">Season Year</label>
+                                    <select class="form-select" id="year" required>
+                                        <option value="2024" selected>2024</option>
+                                        <option value="2023">2023</option>
+                                        <option value="2022">2022</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="grandPrix" class="form-label">Grand Prix</label>
+                                    <select class="form-select" id="grandPrix" required>
+                                        <option value="Bahrain" selected>Bahrain</option>
+                                        <option value="Saudi Arabia">Saudi Arabia</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Japan">Japan</option>
+                                        <option value="China">China</option>
+                                        <option value="Miami">Miami</option>
+                                        <option value="Emilia Romagna">Emilia Romagna</option>
+                                        <option value="Monaco">Monaco</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="Spain">Spain</option>
+                                        <option value="Austria">Austria</option>
+                                        <option value="Great Britain">Great Britain</option>
+                                        <option value="Hungary">Hungary</option>
+                                        <option value="Belgium">Belgium</option>
+                                        <option value="Netherlands">Netherlands</option>
+                                        <option value="Italy">Italy</option>
+                                        <option value="Azerbaijan">Azerbaijan</option>
+                                        <option value="Singapore">Singapore</option>
+                                        <option value="United States">United States</option>
+                                        <option value="Mexico">Mexico</option>
+                                        <option value="Brazil">Brazil</option>
+                                        <option value="Las Vegas">Las Vegas</option>
+                                        <option value="Qatar">Qatar</option>
+                                        <option value="Abu Dhabi">Abu Dhabi</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="session" class="form-label">Session</label>
+                                    <select class="form-select" id="session">
+                                        <option value="Practice 1">Practice 1</option>
+                                        <option value="Practice 2">Practice 2</option>
+                                        <option value="Practice 3">Practice 3</option>
+                                        <option value="Sprint Shootout">Sprint Shootout</option>
+                                        <option value="Sprint">Sprint</option>
+                                        <option value="Qualifying">Qualifying</option>
+                                        <option value="Race" selected>Race</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="driver" class="form-label">Driver (for stress)</label>
+                                    <select class="form-select" id="driver">
+                                        <option value="VER">VER</option>
+                                        <option value="PER">PER</option>
+                                        <option value="HAM">HAM</option>
+                                        <option value="RUS">RUS</option>
+                                        <option value="LEC">LEC</option>
+                                        <option value="SAI">SAI</option>
+                                        <option value="NOR">NOR</option>
+                                        <option value="PIA">PIA</option>
+                                        <option value="ALO">ALO</option>
+                                        <option value="STR">STR</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-primary" onclick="runQuantumAnalysis()">
+                                            <i class="fas fa-atom me-1"></i>Quantum Analysis
+                                        </button>
+                                        <button type="button" class="btn btn-success" onclick="runRaceStrategy()">
+                                            <i class="fas fa-chess me-1"></i>Race Strategy
+                                        </button>
+                                        <button type="button" class="btn btn-info" onclick="runRealtimeAnalysis()">
+                                            <i class="fas fa-broadcast-tower me-1"></i>Real-time
+                                        </button>
+                                        <button type="button" class="btn btn-warning" onclick="runStressAnalysis()">
+                                            <i class="fas fa-heartbeat me-1"></i>Stress Analysis
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="runAdvancedAnalysis()">
+                                            <i class="fas fa-cogs me-1"></i>Advanced
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="row mb-4" id="loadingIndicator" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Processing F1 data and running analysis...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="row mb-4" id="results">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line me-2"></i>Analysis Results</h3>
+                        <button class="btn btn-sm btn-outline-light float-end" onclick="exportResults()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                    </div>
+                    <div class="card-body" id="resultsContent">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-play-circle fa-3x mb-3"></i>
+                            <p>Select analysis parameters and click a button above to start analyzing F1 data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-4" id="chartsSection" style="display: none;">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock me-2"></i>Lap Time Trends</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="lapTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis History -->
+        <div class="row mb-4" id="history">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history me-2"></i>Analysis History</h3>
+                        <button class="btn btn-sm btn-outline-light float-end" onclick="loadAnalysisHistory()">
+                            <i class="fas fa-refresh me-1"></i>Refresh
+                        </button>
+                    </div>
+                    <div class="card-body" id="historyContent">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <p>Click refresh to load analysis history</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2024 F1 Analytics Dashboard. Advanced Performance Analysis Platform.</p>
+            <p class="small">
+                <i class="fas fa-database me-1"></i>Powered by FastF1 Data API
+                <span class="mx-2">|</span>
+                <i class="fas fa-chart-bar me-1"></i>Real-time Analytics
+                <span class="mx-2">|</span>
+                <i class="fas fa-atom me-1"></i>Quantum Modeling
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

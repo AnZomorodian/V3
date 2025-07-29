@@ -1,0 +1,240 @@
+:root {
+    --f1-red: #dc143c;
+    --f1-blue: #0600ef;
+    --f1-green: #00ff00;
+    --f1-orange: #ff8700;
+    --gradient-primary: linear-gradient(135deg, var(--f1-red), var(--f1-blue));
+    --gradient-secondary: linear-gradient(135deg, var(--f1-orange), var(--f1-green));
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--gradient-primary);
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.analysis-card {
+    border-left: 4px solid var(--f1-red);
+    margin-bottom: 1rem;
+}
+
+.quantum-card {
+    border-left: 4px solid var(--f1-blue);
+}
+
+.strategy-card {
+    border-left: 4px solid var(--f1-green);
+}
+
+.stress-card {
+    border-left: 4px solid var(--f1-orange);
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--f1-red);
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.driver-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.driver-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.position-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+.position-1 { background-color: #ffd700; color: #000; }
+.position-2 { background-color: #c0c0c0; color: #000; }
+.position-3 { background-color: #cd7f32; color: #000; }
+
+.tire-compound {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.tire-soft { background-color: #ff3333; color: white; }
+.tire-medium { background-color: #ffff33; color: black; }
+.tire-hard { background-color: #ffffff; color: black; }
+.tire-intermediate { background-color: #33ff33; color: black; }
+.tire-wet { background-color: #3333ff; color: white; }
+
+.stress-indicator {
+    height: 20px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+    position: relative;
+    overflow: hidden;
+}
+
+.stress-marker {
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: white;
+    border-radius: 1px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--f1-red);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.error-message {
+    background: linear-gradient(135deg, #dc3545, #bd2130);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.quantum-visualization {
+    background: radial-gradient(circle, rgba(6, 0, 239, 0.1), rgba(220, 20, 60, 0.1));
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.data-table {
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    font-weight: 600;
+}
+
+.data-table td {
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+.export-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-value {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--f1-red);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(220, 20, 60, 0.8);
+}
