@@ -98,3 +98,35 @@ def safe_int_conversion(value: Any, default: int = 0) -> int:
         return default
     except (ValueError, TypeError):
         return default
+
+def format_lap_time(time_value: Any) -> str:
+    """Format lap time from timedelta to readable string format (e.g., '01:32.608')"""
+    try:
+        if time_value is None or pd.isna(time_value):
+            return "N/A"
+        
+        # Handle timedelta objects
+        if isinstance(time_value, timedelta):
+            total_seconds = time_value.total_seconds()
+        elif isinstance(time_value, pd.Timedelta):
+            total_seconds = time_value.total_seconds()
+        elif isinstance(time_value, (int, float)):
+            total_seconds = float(time_value)
+        else:
+            # Try to convert string or other types
+            total_seconds = float(str(time_value))
+        
+        if total_seconds <= 0 or np.isnan(total_seconds):
+            return "N/A"
+        
+        # Convert to minutes:seconds.milliseconds format
+        minutes = int(total_seconds // 60)
+        seconds = total_seconds % 60
+        
+        if minutes > 0:
+            return f"{minutes:02d}:{seconds:06.3f}"
+        else:
+            return f"{seconds:.3f}s"
+            
+    except (ValueError, TypeError, AttributeError):
+        return "N/A"

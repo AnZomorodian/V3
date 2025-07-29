@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from utils.data_loader import DataLoader
+from utils.json_utils import make_json_serializable, format_lap_time
 
 class DriverStressAnalyzer:
     """Analyze driver stress levels based on telemetry data"""
@@ -133,13 +134,14 @@ class DriverStressAnalyzer:
                         'severity': 'high' if moving_std.iloc[i] > moving_std.mean() + 3 * moving_std.std() else 'moderate'
                     })
             
-            return {
+            return make_json_serializable({
                 'overall_consistency': float(np.std(lap_times) / np.mean(lap_times)),
                 'consistency_rating': self.rate_consistency(np.std(lap_times) / np.mean(lap_times)),
                 'breakdown_incidents': consistency_breakdowns,
                 'most_consistent_period': self.find_most_consistent_period(lap_times),
-                'least_consistent_period': self.find_least_consistent_period(lap_times)
-            }
+                'least_consistent_period': self.find_least_consistent_period(lap_times),
+                'lap_time_trends': self.generate_lap_time_trends(lap_times)
+            })
             
         except Exception as e:
             return {'error': str(e)}
@@ -564,3 +566,47 @@ class DriverStressAnalyzer:
             
         except Exception as e:
             return 50
+
+    def generate_lap_time_trends(self, lap_times):
+        """Generate formatted lap time trends for visualization"""
+        try:
+            if len(lap_times) < 3:
+                return {'error': 'Insufficient data for trends'}
+            
+            # Create lap-by-lap trend data
+            trends = []
+            for i, lap_time in enumerate(lap_times):
+                lap_data = {
+                    'lap_number': i + 1,
+                    'lap_time': format_lap_time(lap_time),
+                    'lap_time_seconds': float(lap_time),
+                    'relative_to_best': float(lap_time - min(lap_times)),
+                    'relative_to_avg': float(lap_time - np.mean(lap_times))
+                }
+                trends.append(lap_data)
+            
+            # Calculate trend statistics
+            best_lap = min(lap_times)
+            worst_lap = max(lap_times)
+            avg_lap = np.mean(lap_times)
+            
+            # Calculate improvement/degradation trend
+            first_half = lap_times[:len(lap_times)//2]
+            second_half = lap_times[len(lap_times)//2:]
+            
+            trend_direction = 'improving' if np.mean(second_half) < np.mean(first_half) else 'degrading'
+            
+            return {
+                'lap_by_lap': trends,
+                'summary': {
+                    'best_lap': format_lap_time(best_lap),
+                    'worst_lap': format_lap_time(worst_lap),
+                    'average_lap': format_lap_time(avg_lap),
+                    'lap_spread': format_lap_time(worst_lap - best_lap),
+                    'trend_direction': trend_direction,
+                    'total_laps': len(lap_times)
+                }
+            }
+            
+        except Exception as e:
+            return {'error': f'Failed to generate trends: {str(e)}'}

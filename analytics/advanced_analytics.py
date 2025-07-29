@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 from utils.data_loader import DataLoader
-from utils.json_utils import make_json_serializable
+from utils.json_utils import make_json_serializable, format_lap_time
 
 class AdvancedF1Analytics:
     """Advanced F1 analytics and insights"""
@@ -50,8 +50,8 @@ class AdvancedF1Analytics:
                     position = fastest_lap['Position'] if pd.notna(fastest_lap['Position']) else None
                     
                     performance_data[str(driver)] = {
-                        'fastest_lap_time': str(fastest_time) if fastest_time is not None else None,
-                        'average_lap_time': str(avg_time) if avg_time is not None else None,
+                        'fastest_lap_time': format_lap_time(fastest_time),
+                        'average_lap_time': format_lap_time(avg_time),
                         'total_laps': int(len(driver_laps)),
                         'valid_laps': int(len(driver_laps.dropna(subset=['LapTime']))),
                         'position': int(position) if position is not None else None

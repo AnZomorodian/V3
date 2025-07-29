@@ -9,7 +9,8 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from utils.data_loader import DataLoader
-from utils.constants import TEAM_COLORS
+from utils.constants import TEAM_COLORS, DRIVER_TEAMS
+from utils.json_utils import make_json_serializable, format_lap_time
 
 class RealTimeAnalyzer:
     """Real-time F1 data analysis and streaming capabilities"""
@@ -78,18 +79,21 @@ class RealTimeAnalyzer:
             standings_list = []
             for idx, row in standings.iterrows():
                 driver = row['Driver']
+                tire_life = row.get('TyreLife', 0)
+                lap_number = row.get('LapNumber', 0)
+                
                 standings_list.append({
                     'position': idx + 1,
-                    'driver': driver,
+                    'driver': str(driver),
                     'team': DRIVER_TEAMS.get(driver, 'Unknown'),
-                    'lap_number': int(row['LapNumber']),
-                    'last_lap_time': str(row['LapTime']),
-                    'compound': row.get('Compound', 'Unknown'),
-                    'tire_life': int(row.get('TyreLife', 0)),
+                    'lap_number': int(lap_number) if pd.notna(lap_number) else 0,
+                    'last_lap_time': format_lap_time(row['LapTime']),
+                    'compound': str(row.get('Compound', 'Unknown')),
+                    'tire_life': int(tire_life) if pd.notna(tire_life) else 0,
                     'team_color': TEAM_COLORS.get(DRIVER_TEAMS.get(driver, ''), '#808080')
                 })
             
-            return standings_list
+            return make_json_serializable(standings_list)
             
         except Exception as e:
             self.logger.error(f"Error calculating standings: {str(e)}")
@@ -107,15 +111,23 @@ class RealTimeAnalyzer:
                 
                 if not driver_laps.empty:
                     latest_lap = driver_laps.iloc[-1]
+                    
+                    # Safely extract and format data
+                    sector_1 = latest_lap.get('Sector1Time')
+                    sector_2 = latest_lap.get('Sector2Time') 
+                    sector_3 = latest_lap.get('Sector3Time')
+                    lap_time = latest_lap.get('LapTime')
+                    speed_trap = latest_lap.get('SpeedST')
+                    
                     sector_data[driver] = {
-                        'sector_1': str(latest_lap.get('Sector1Time', 'N/A')),
-                        'sector_2': str(latest_lap.get('Sector2Time', 'N/A')),
-                        'sector_3': str(latest_lap.get('Sector3Time', 'N/A')),
-                        'lap_time': str(latest_lap.get('LapTime', 'N/A')),
-                        'speed_trap': float(latest_lap.get('SpeedST', 0)) if latest_lap.get('SpeedST') else 0
+                        'sector_1': format_lap_time(sector_1),
+                        'sector_2': format_lap_time(sector_2),
+                        'sector_3': format_lap_time(sector_3),
+                        'lap_time': format_lap_time(lap_time),
+                        'speed_trap': float(speed_trap) if pd.notna(speed_trap) and speed_trap != 0 else None
                     }
             
-            return sector_data
+            return make_json_serializable(sector_data)
             
         except Exception as e:
             self.logger.error(f"Error getting sector times: {str(e)}")
@@ -139,26 +151,30 @@ class RealTimeAnalyzer:
                 driver = row['Driver']
                 lap_time = row['LapTime_seconds']
                 
+                # Handle NaN values
+                if pd.isna(lap_time):
+                    continue
+                
                 if idx == 0:  # Leader
                     leader_time = lap_time
-                    gaps[driver] = {
+                    gaps[str(driver)] = {
                         'gap_to_leader': 0.0,
                         'gap_to_ahead': 0.0,
                         'position': 1
                     }
                     previous_time = lap_time
                 else:
-                    gap_to_leader = lap_time - leader_time if leader_time else 0
-                    gap_to_ahead = lap_time - previous_time if previous_time else 0
+                    gap_to_leader = lap_time - leader_time if leader_time and not pd.isna(leader_time) else 0
+                    gap_to_ahead = lap_time - previous_time if previous_time and not pd.isna(previous_time) else 0
                     
-                    gaps[driver] = {
-                        'gap_to_leader': round(gap_to_leader, 3),
-                        'gap_to_ahead': round(gap_to_ahead, 3),
+                    gaps[str(driver)] = {
+                        'gap_to_leader': round(float(gap_to_leader), 3),
+                        'gap_to_ahead': round(float(gap_to_ahead), 3),
                         'position': idx + 1
                     }
                     previous_time = lap_time
             
-            return gaps
+            return make_json_serializable(gaps)
             
         except Exception as e:
             self.logger.error(f"Error calculating gaps: {str(e)}")
