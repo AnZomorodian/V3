@@ -1,0 +1,61 @@
+DEBUG:requests_cache.policy.actions:Cache directives from response headers: CacheDirectives(max_age=3600, etag='"1e002aedee7e5abc9f3d2c12f8688fdf"', last_modified='Sun, 03 Nov 2024 18:19:06 GMT')
+DEBUG:charset_normalizer:Encoding detection: utf_8 is most likely the one.
+DEBUG:requests_cache.policy.actions:Pre-write cache checks: Passed
+DEBUG:charset_normalizer:Encoding detection: utf_8 is most likely the one.
+_api           INFO     Parsing position data...
+INFO:fastf1.api:Parsing position data...
+_api        WARNING     Driver 241: Position data is incomplete!
+WARNING:fastf1.api:Driver 241: Position data is incomplete!
+_api        WARNING     Driver 242: Position data is incomplete!
+WARNING:fastf1.api:Driver 242: Position data is incomplete!
+_api        WARNING     Driver 243: Position data is incomplete!
+WARNING:fastf1.api:Driver 243: Position data is incomplete!
+req            INFO     Data has been written to cache!
+INFO:fastf1.fastf1.req:Data has been written to cache!
+[2025-07-29 16:02:03 +0000] [4478] [CRITICAL] WORKER TIMEOUT (pid:4502)
+[2025-07-29 16:02:03 +0000] [4502] [ERROR] Error handling request /api/driver-comparison
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/werkzeug/middleware/proxy_fix.py", line 183, in __call__
+    return self.app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes.py", line 248, in driver_comparison
+    result = advanced_analytics.compare_drivers(year, grand_prix, session)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/analytics/advanced_analytics.py", line 574, in compare_drivers
+    session_data = self.data_loader.load_session_data(year, grand_prix, session)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/utils/data_loader.py", line 36, in load_session_data
+    session_obj.load()
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastf1/core.py", line 1443, in load
+    self._load_telemetry(livedata=livedata)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastf1/logger.py", line 151, in __wrapped
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastf1/core.py", line 2610, in _load_telemetry
+    self._calculate_t0_date(car_data, pos_data)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastf1/core.py", line 2714, in _calculate_t0_date
+    new_offset = max(d['Date'] - d['Time'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/pandas/core/arrays/datetimes.py", line 668, in __iter__
+    converted = ints_to_pydatetime(
+                ^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/base.py", line 204, in handle_abort
+    sys.exit(1)
+SystemExit: 1
