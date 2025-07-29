@@ -1,0 +1,338 @@
+/* Enhanced F1 Analytics Dashboard Styles */
+
+/* Modern Card Designs */
+.analytics-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 1px solid #444;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.analytics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-color: #007bff;
+}
+
+/* Data Visualization Cards */
+.data-card {
+    background: linear-gradient(145deg, #212529 0%, #343a40 100%);
+    border: none;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.data-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff0000, #ff8c00, #ffd700, #00ff00, #0000ff);
+    border-radius: 20px 20px 0 0;
+}
+
+/* Enhanced Metric Cards */
+.metric-display {
+    background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px 0;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-display::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Track Analysis Specific Styles */
+.track-info-card {
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    color: white;
+}
+
+.speed-analysis-card {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: white;
+}
+
+.sector-card {
+    background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+    color: white;
+}
+
+/* Tire Performance Styles */
+.tire-soft { 
+    background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+    color: white;
+}
+
+.tire-medium { 
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+    color: #000;
+}
+
+.tire-hard { 
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    color: #000;
+}
+
+.tire-intermediate { 
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    color: white;
+}
+
+.tire-wet { 
+    background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+    color: white;
+}
+
+/* Enhanced Tables */
+.enhanced-table {
+    background: transparent;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.enhanced-table thead {
+    background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+}
+
+.enhanced-table tbody tr {
+    border-bottom: 1px solid #444;
+    transition: all 0.3s ease;
+}
+
+.enhanced-table tbody tr:hover {
+    background: rgba(255, 23, 68, 0.1);
+    transform: scale(1.02);
+}
+
+/* Progress Bars */
+.progress-modern {
+    height: 20px;
+    border-radius: 10px;
+    background: #2d2d2d;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-modern {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #ff1744, #ffc107, #4caf50);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar-modern::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Status Indicators */
+.status-excellent {
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-good {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-poor {
+    background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+/* Interactive Elements */
+.interactive-stat {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.interactive-stat:hover {
+    transform: scale(1.05);
+}
+
+.interactive-stat::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.interactive-stat:hover::before {
+    opacity: 1;
+}
+
+/* Driver Comparison Enhancements */
+.driver-comparison-card {
+    background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.driver-vs-indicator {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: #ff1744;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 20px 0;
+}
+
+/* Enhanced Result Cards */
+.result-card-header {
+    background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    font-weight: bold;
+    position: relative;
+}
+
+.result-card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffc107, transparent);
+}
+
+/* Animation Classes */
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Special Effects */
+.glow-effect {
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+    animation: glow-pulse 2s infinite alternate;
+}
+
+@keyframes glow-pulse {
+    from {
+        box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(255, 23, 68, 0.6);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .metric-display {
+        margin: 5px 0;
+        padding: 15px;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+    }
+    
+    .data-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+}

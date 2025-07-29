@@ -1507,17 +1507,39 @@ function displayEnhancedResults(data, title) {
 }
 
 function displayTrackAnalysisResults(trackData) {
-    let html = '<div class="row">';
+    let html = '<div class="row fade-in-up">';
     
     if (trackData.track_info) {
+        const distance = trackData.track_info.total_distance || 0;
+        const distanceKm = (distance / 1000).toFixed(2);
+        const turnCount = trackData.track_info.turn_count || 'Unknown';
+        const drsZones = trackData.track_info.drs_zones || 0;
+        
         html += `
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><h6><i class="fas fa-road me-2"></i>Track Information</h6></div>
-                    <div class="card-body">
-                        <p><strong>Total Distance:</strong> ${trackData.track_info.total_distance?.toFixed(0) || 'N/A'} meters</p>
-                        <p><strong>Turn Count:</strong> ${trackData.track_info.turn_count || 'N/A'}</p>
-                        <p><strong>DRS Zones:</strong> ${trackData.track_info.drs_zones || 'N/A'}</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="data-card track-info-card glow-effect">
+                    <div class="result-card-header">
+                        <i class="fas fa-road me-2"></i>Track Information
+                    </div>
+                    <div class="mt-3">
+                        <div class="metric-display interactive-stat" data-tooltip="Total circuit length">
+                            <div class="metric-value">${distanceKm} km</div>
+                            <div class="metric-label">Track Distance</div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <div class="metric-display interactive-stat" data-tooltip="Number of corners/turns">
+                                    <div class="metric-value">${turnCount}</div>
+                                    <div class="metric-label">Turns</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-display interactive-stat" data-tooltip="DRS activation zones">
+                                    <div class="metric-value">${drsZones}</div>
+                                    <div class="metric-label">DRS Zones</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1525,77 +1547,178 @@ function displayTrackAnalysisResults(trackData) {
     }
 
     if (trackData.speed_analysis) {
+        const maxSpeed = trackData.speed_analysis.max_speed || 0;
+        const avgSpeed = trackData.speed_analysis.avg_speed || 0;
+        const highSpeedPct = trackData.speed_analysis.high_speed_percentage || 0;
+        const speedEfficiency = ((avgSpeed / maxSpeed) * 100).toFixed(1);
+        
         html += `
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><h6><i class="fas fa-tachometer-alt me-2"></i>Speed Analysis</h6></div>
-                    <div class="card-body">
-                        <p><strong>Max Speed:</strong> ${trackData.speed_analysis.max_speed?.toFixed(1) || 'N/A'} km/h</p>
-                        <p><strong>Average Speed:</strong> ${trackData.speed_analysis.avg_speed?.toFixed(1) || 'N/A'} km/h</p>
-                        <p><strong>High Speed %:</strong> ${trackData.speed_analysis.high_speed_percentage?.toFixed(1) || 'N/A'}%</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="data-card speed-analysis-card">
+                    <div class="result-card-header">
+                        <i class="fas fa-tachometer-alt me-2"></i>Speed Analysis
+                    </div>
+                    <div class="mt-3">
+                        <div class="metric-display interactive-stat" data-tooltip="Highest speed recorded on track">
+                            <div class="metric-value">${maxSpeed.toFixed(1)}</div>
+                            <div class="metric-label">Max Speed (km/h)</div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <div class="metric-display interactive-stat" data-tooltip="Average speed throughout lap">
+                                    <div class="metric-value">${avgSpeed.toFixed(1)}</div>
+                                    <div class="metric-label">Avg Speed</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-display interactive-stat" data-tooltip="Percentage of lap at high speed">
+                                    <div class="metric-value">${highSpeedPct.toFixed(1)}%</div>
+                                    <div class="metric-label">High Speed</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="progress-modern">
+                                <div class="progress-bar-modern" style="width: ${speedEfficiency}%"></div>
+                            </div>
+                            <div class="text-center mt-2">
+                                <small>Speed Efficiency: ${speedEfficiency}%</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         `;
     }
 
+    // Add track difficulty indicator
+    html += `
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="data-card sector-card">
+                <div class="result-card-header">
+                    <i class="fas fa-chart-line me-2"></i>Track Characteristics
+                </div>
+                <div class="mt-3">
+                    <div class="metric-display interactive-stat" data-tooltip="Track difficulty rating">
+                        <div class="metric-value">${calculateTrackDifficulty(trackData)}</div>
+                        <div class="metric-label">Difficulty Rating</div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="status-indicator ${getTrackTypeClass(trackData)}">
+                            ${getTrackType(trackData)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
     html += '</div>';
     return html;
+}
+
+// Helper functions for enhanced track analysis
+function calculateTrackDifficulty(trackData) {
+    if (!trackData.speed_analysis) return 'N/A';
+    
+    const speedVariance = trackData.speed_analysis.speed_variance || 0;
+    const highSpeedPct = trackData.speed_analysis.high_speed_percentage || 0;
+    
+    const difficulty = Math.min(10, Math.max(1, (speedVariance / 1000 + (100 - highSpeedPct) / 20)));
+    return difficulty.toFixed(1) + '/10';
+}
+
+function getTrackType(trackData) {
+    if (!trackData.speed_analysis) return 'Unknown';
+    
+    const highSpeedPct = trackData.speed_analysis.high_speed_percentage || 0;
+    
+    if (highSpeedPct > 70) return 'High-Speed Circuit';
+    if (highSpeedPct > 40) return 'Balanced Circuit';
+    return 'Technical Circuit';
+}
+
+function getTrackTypeClass(trackData) {
+    if (!trackData.speed_analysis) return 'status-poor';
+    
+    const highSpeedPct = trackData.speed_analysis.high_speed_percentage || 0;
+    
+    if (highSpeedPct > 70) return 'status-excellent';
+    if (highSpeedPct > 40) return 'status-good';
+    return 'status-poor';
 }
 
 function displayTirePerformanceResults(tireData) {
-    let html = '<div class="row">';
+    let html = '<div class="row fade-in-up">';
     
     if (tireData.compound_performance && tireData.compound_performance.compound_data) {
-        html += '<div class="col-12"><h5><i class="fas fa-circle me-2"></i>Compound Performance</h5></div>';
+        html += `
+            <div class="col-12 mb-4">
+                <div class="analytics-card">
+                    <div class="result-card-header">
+                        <i class="fas fa-circle me-2"></i>Tire Compound Performance Analysis
+                    </div>
+                </div>
+            </div>
+        `;
         
         Object.entries(tireData.compound_performance.compound_data).forEach(([compound, data]) => {
             const compoundClass = getTireCompoundClass(compound);
-            html += `
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">
-                                <span class="badge ${compoundClass} me-2">${compound}</span>
-                                Compound
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Total Laps:</strong> ${data.total_laps}</p>
-                            <p><strong>Average Time:</strong> ${data.average_lap_time?.toFixed(2) || 'N/A'}s</p>
-                            <p><strong>Best Time:</strong> ${data.best_lap_time?.toFixed(2) || 'N/A'}s</p>
-                            <p><strong>Drivers Used:</strong> ${data.drivers_used}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    html += '</div>';
-    return html;
-}
-
-function displayDownforceResults(downforceData) {
-    let html = '<div class="row">';
-    
-    if (downforceData.aerodynamic_efficiency) {
-        html += '<div class="col-12"><h5><i class="fas fa-wind me-2"></i>Aerodynamic Efficiency by Driver</h5></div>';
-        
-        Object.entries(downforceData.aerodynamic_efficiency).forEach(([driver, data]) => {
-            const efficiencyScore = data.overall_efficiency_score || 0;
-            const scoreClass = efficiencyScore > 80 ? 'text-success' : efficiencyScore > 60 ? 'text-warning' : 'text-danger';
+            const avgTime = data.average_lap_time || 0;
+            const bestTime = data.best_lap_time || 0;
+            const degradation = avgTime > 0 && bestTime > 0 ? ((avgTime - bestTime) / bestTime * 100).toFixed(2) : 0;
+            const performance = avgTime > 0 ? Math.max(0, 100 - (avgTime - 60)).toFixed(1) : 0;
             
             html += `
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">${driver}</h6>
+                <div class="col-lg-4 col-md-6 mb-4 slide-in-right">
+                    <div class="data-card ${compoundClass}">
+                        <div class="result-card-header">
+                            <i class="fas fa-circle me-2"></i>${compound} Compound
                         </div>
-                        <div class="card-body">
-                            <p><strong>Efficiency Score:</strong> <span class="${scoreClass}">${efficiencyScore.toFixed(1)}/100</span></p>
-                            <p><strong>Max Speed:</strong> ${data.max_speed_achieved?.toFixed(1) || 'N/A'} km/h</p>
-                            <p><strong>Rating:</strong> ${data.efficiency_rating || 'N/A'}</p>
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="metric-display interactive-stat" data-tooltip="Total laps completed on this compound">
+                                        <div class="metric-value">${data.total_laps}</div>
+                                        <div class="metric-label">Total Laps</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-display interactive-stat" data-tooltip="Number of drivers who used this compound">
+                                        <div class="metric-value">${data.drivers_used}</div>
+                                        <div class="metric-label">Drivers</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="metric-display interactive-stat" data-tooltip="Fastest lap time on this compound">
+                                    <div class="metric-value">${formatLapTime(data.best_lap_time)}</div>
+                                    <div class="metric-label">Best Lap Time</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="metric-display interactive-stat" data-tooltip="Average lap time across all drivers">
+                                    <div class="metric-value">${formatLapTime(data.average_lap_time)}</div>
+                                    <div class="metric-label">Average Time</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="progress-modern">
+                                    <div class="progress-bar-modern" style="width: ${Math.min(100, performance)}%"></div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <small>Performance Rating: ${performance}%</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <div class="badge ${degradation > 2 ? 'status-poor' : degradation > 1 ? 'status-good' : 'status-excellent'}">
+                                    Degradation: ${degradation}%
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1607,36 +1730,127 @@ function displayDownforceResults(downforceData) {
     return html;
 }
 
+
+
 function displayDriverComparisonResults(comparisonData) {
-    let html = '<div class="row">';
+    let html = '<div class="row fade-in-up">';
     
     if (comparisonData.comparative_analysis) {
         const analysis = comparisonData.comparative_analysis;
         html += `
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-trophy me-2"></i>Comparison Summary</h6>
-                    <p><strong>Fastest Driver:</strong> ${analysis.fastest_driver || 'N/A'}</p>
-                    <p><strong>Most Consistent:</strong> ${analysis.most_consistent_driver || 'N/A'}</p>
+            <div class="col-12 mb-4">
+                <div class="analytics-card">
+                    <div class="result-card-header">
+                        <i class="fas fa-trophy me-2"></i>Head-to-Head Comparison Analysis
+                    </div>
+                    <div class="mt-3 p-3">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <div class="metric-display status-excellent interactive-stat" data-tooltip="Driver with the fastest lap time">
+                                    <div class="metric-value"><i class="fas fa-crown me-2"></i>${analysis.fastest_driver || 'Analyzing'}</div>
+                                    <div class="metric-label">Fastest Driver</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="metric-display status-good interactive-stat" data-tooltip="Most consistent performance throughout session">
+                                    <div class="metric-value"><i class="fas fa-medal me-2"></i>${analysis.most_consistent_driver || 'Analyzing'}</div>
+                                    <div class="metric-label">Most Consistent</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
     }
 
     if (comparisonData.driver_statistics) {
-        html += '<div class="col-12"><h5><i class="fas fa-users me-2"></i>Driver Statistics</h5></div>';
+        html += `
+            <div class="col-12 mb-3">
+                <div class="driver-vs-indicator">
+                    <i class="fas fa-fighters me-2"></i>DRIVER STATISTICS
+                </div>
+            </div>
+        `;
         
-        Object.entries(comparisonData.driver_statistics).forEach(([driver, stats]) => {
+        const drivers = Object.keys(comparisonData.driver_statistics);
+        const driverStats = Object.values(comparisonData.driver_statistics);
+        
+        // Find best performance for comparison
+        const fastestTimes = driverStats.map(stats => stats.fastest_lap_time || 999);
+        const bestTime = Math.min(...fastestTimes);
+        
+        Object.entries(comparisonData.driver_statistics).forEach(([driver, stats], index) => {
+            const fastestLap = stats.fastest_lap_time || 0;
+            const averageLap = stats.average_lap_time || 0;
+            const validLaps = stats.valid_laps || 0;
+            
+            // Performance calculations
+            const timeGap = fastestLap > 0 && bestTime > 0 ? ((fastestLap - bestTime)).toFixed(3) : 0;
+            const consistency = averageLap > 0 && fastestLap > 0 ? (100 - ((averageLap - fastestLap) / fastestLap * 100)).toFixed(1) : 0;
+            const performance = fastestLap > 0 ? Math.max(0, 100 - (timeGap * 10)).toFixed(1) : 0;
+            
+            // Determine card styling based on performance
+            let cardClass = 'driver-comparison-card';
+            if (fastestLap === bestTime) cardClass = 'sector-card'; // Winner
+            else if (timeGap < 0.5) cardClass = 'track-info-card'; // Close
+            else cardClass = 'speed-analysis-card'; // Behind
+            
             html += `
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">${driver}</h6>
+                <div class="col-lg-4 col-md-6 mb-4 slide-in-right">
+                    <div class="data-card ${cardClass}">
+                        <div class="result-card-header">
+                            <i class="fas fa-user-racing me-2"></i>${driver}
+                            ${fastestLap === bestTime ? '<i class="fas fa-crown ms-2 text-warning"></i>' : ''}
                         </div>
-                        <div class="card-body">
-                            <p><strong>Valid Laps:</strong> ${stats.valid_laps}</p>
-                            <p><strong>Fastest Lap:</strong> ${formatLapTime(stats.fastest_lap_time)}</p>
-                            <p><strong>Average:</strong> ${formatLapTime(stats.average_lap_time)}</p>
+                        <div class="mt-3">
+                            <div class="metric-display interactive-stat" data-tooltip="Best lap time achieved in session">
+                                <div class="metric-value">${formatLapTime(fastestLap)}</div>
+                                <div class="metric-label">Fastest Lap</div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="metric-display interactive-stat" data-tooltip="Average lap time across all valid laps">
+                                        <div class="metric-value">${formatLapTime(averageLap)}</div>
+                                        <div class="metric-label">Average</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-display interactive-stat" data-tooltip="Number of completed laps">
+                                        <div class="metric-value">${validLaps}</div>
+                                        <div class="metric-label">Valid Laps</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="progress-modern">
+                                    <div class="progress-bar-modern" style="width: ${performance}%"></div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <small>Performance Index: ${performance}%</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="interactive-stat" data-tooltip="Gap to fastest lap time">
+                                            <small class="text-muted">Gap to Leader</small>
+                                            <div class="fw-bold ${timeGap > 0 ? 'text-danger' : 'text-success'}">
+                                                ${timeGap > 0 ? '+' : ''}${timeGap}s
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="interactive-stat" data-tooltip="Consistency rating based on lap time variance">
+                                            <small class="text-muted">Consistency</small>
+                                            <div class="fw-bold">${consistency}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
