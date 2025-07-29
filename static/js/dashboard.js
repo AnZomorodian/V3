@@ -1372,6 +1372,283 @@ function showLapTimeDetails(driver) {
  */
 
 /**
+ * Enhanced Analytics Functions
+ */
+
+// Run Track Analysis
+async function runTrackAnalysis() {
+    currentAnalysisType = 'track-analysis';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        const result = await makeAPICall('/api/track-analysis', params);
+
+        currentResults = result;
+        displayEnhancedResults(result, 'Track Analysis Results');
+        showChartsSection();
+
+    } catch (error) {
+        displayError(`Track analysis failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Run Tire Performance Analysis
+async function runTirePerformance() {
+    currentAnalysisType = 'tire-performance';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        const result = await makeAPICall('/api/tire-performance', params);
+
+        currentResults = result;
+        displayEnhancedResults(result, 'Tire Performance Analysis');
+        showChartsSection();
+
+    } catch (error) {
+        displayError(`Tire performance analysis failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Run Downforce Analysis
+async function runDownforceAnalysis() {
+    currentAnalysisType = 'downforce-analysis';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        const result = await makeAPICall('/api/downforce-analysis', params);
+
+        currentResults = result;
+        displayEnhancedResults(result, 'Downforce Analysis Results');
+        showChartsSection();
+
+    } catch (error) {
+        displayError(`Downforce analysis failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Run Comprehensive Driver Comparison
+async function runComprehensiveComparison() {
+    currentAnalysisType = 'comprehensive-comparison';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        // Add multiple top drivers for comprehensive comparison
+        params.drivers = ['VER', 'HAM', 'LEC', 'NOR'];
+        const result = await makeAPICall('/api/comprehensive-driver-comparison', params);
+
+        currentResults = result;
+        displayEnhancedResults(result, 'Multi-Driver Comparison');
+        showChartsSection();
+
+    } catch (error) {
+        displayError(`Comprehensive driver comparison failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Enhanced Results Display Function
+function displayEnhancedResults(data, title) {
+    const resultsDiv = document.getElementById('resultsContent');
+    
+    let html = `
+        <div class="analysis-results fade-in">
+            <h4 class="mb-4 text-primary">
+                <i class="fas fa-chart-line me-2"></i>${title}
+            </h4>
+    `;
+
+    if (data.error) {
+        html += `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Error:</strong> ${data.error}
+            </div>
+        `;
+    } else {
+        // Display different types of analysis results
+        if (data.track_analysis) {
+            html += displayTrackAnalysisResults(data.track_analysis);
+        } else if (data.compound_performance) {
+            html += displayTirePerformanceResults(data);
+        } else if (data.aerodynamic_efficiency) {
+            html += displayDownforceResults(data);
+        } else if (data.driver_comparison) {
+            html += displayDriverComparisonResults(data.driver_comparison);
+        } else {
+            // Default display for other analysis types
+            html += '<div class="alert alert-success">';
+            html += '<i class="fas fa-check-circle me-2"></i>';
+            html += 'Analysis completed successfully. View detailed results below:';
+            html += '</div>';
+            html += '<pre class="bg-dark text-light p-3 rounded">';
+            html += JSON.stringify(data, null, 2);
+            html += '</pre>';
+        }
+    }
+
+    html += '</div>';
+    resultsDiv.innerHTML = html;
+    
+    // Show charts section if we have chart data
+    if (data.charts || data.visualizations) {
+        document.getElementById('chartsSection').style.display = 'block';
+    }
+}
+
+function displayTrackAnalysisResults(trackData) {
+    let html = '<div class="row">';
+    
+    if (trackData.track_info) {
+        html += `
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header"><h6><i class="fas fa-road me-2"></i>Track Information</h6></div>
+                    <div class="card-body">
+                        <p><strong>Total Distance:</strong> ${trackData.track_info.total_distance?.toFixed(0) || 'N/A'} meters</p>
+                        <p><strong>Turn Count:</strong> ${trackData.track_info.turn_count || 'N/A'}</p>
+                        <p><strong>DRS Zones:</strong> ${trackData.track_info.drs_zones || 'N/A'}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    if (trackData.speed_analysis) {
+        html += `
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header"><h6><i class="fas fa-tachometer-alt me-2"></i>Speed Analysis</h6></div>
+                    <div class="card-body">
+                        <p><strong>Max Speed:</strong> ${trackData.speed_analysis.max_speed?.toFixed(1) || 'N/A'} km/h</p>
+                        <p><strong>Average Speed:</strong> ${trackData.speed_analysis.avg_speed?.toFixed(1) || 'N/A'} km/h</p>
+                        <p><strong>High Speed %:</strong> ${trackData.speed_analysis.high_speed_percentage?.toFixed(1) || 'N/A'}%</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    html += '</div>';
+    return html;
+}
+
+function displayTirePerformanceResults(tireData) {
+    let html = '<div class="row">';
+    
+    if (tireData.compound_performance && tireData.compound_performance.compound_data) {
+        html += '<div class="col-12"><h5><i class="fas fa-circle me-2"></i>Compound Performance</h5></div>';
+        
+        Object.entries(tireData.compound_performance.compound_data).forEach(([compound, data]) => {
+            const compoundClass = getTireCompoundClass(compound);
+            html += `
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <span class="badge ${compoundClass} me-2">${compound}</span>
+                                Compound
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Total Laps:</strong> ${data.total_laps}</p>
+                            <p><strong>Average Time:</strong> ${data.average_lap_time?.toFixed(2) || 'N/A'}s</p>
+                            <p><strong>Best Time:</strong> ${data.best_lap_time?.toFixed(2) || 'N/A'}s</p>
+                            <p><strong>Drivers Used:</strong> ${data.drivers_used}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    return html;
+}
+
+function displayDownforceResults(downforceData) {
+    let html = '<div class="row">';
+    
+    if (downforceData.aerodynamic_efficiency) {
+        html += '<div class="col-12"><h5><i class="fas fa-wind me-2"></i>Aerodynamic Efficiency by Driver</h5></div>';
+        
+        Object.entries(downforceData.aerodynamic_efficiency).forEach(([driver, data]) => {
+            const efficiencyScore = data.overall_efficiency_score || 0;
+            const scoreClass = efficiencyScore > 80 ? 'text-success' : efficiencyScore > 60 ? 'text-warning' : 'text-danger';
+            
+            html += `
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">${driver}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Efficiency Score:</strong> <span class="${scoreClass}">${efficiencyScore.toFixed(1)}/100</span></p>
+                            <p><strong>Max Speed:</strong> ${data.max_speed_achieved?.toFixed(1) || 'N/A'} km/h</p>
+                            <p><strong>Rating:</strong> ${data.efficiency_rating || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    return html;
+}
+
+function displayDriverComparisonResults(comparisonData) {
+    let html = '<div class="row">';
+    
+    if (comparisonData.comparative_analysis) {
+        const analysis = comparisonData.comparative_analysis;
+        html += `
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-trophy me-2"></i>Comparison Summary</h6>
+                    <p><strong>Fastest Driver:</strong> ${analysis.fastest_driver || 'N/A'}</p>
+                    <p><strong>Most Consistent:</strong> ${analysis.most_consistent_driver || 'N/A'}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    if (comparisonData.driver_statistics) {
+        html += '<div class="col-12"><h5><i class="fas fa-users me-2"></i>Driver Statistics</h5></div>';
+        
+        Object.entries(comparisonData.driver_statistics).forEach(([driver, stats]) => {
+            html += `
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">${driver}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Valid Laps:</strong> ${stats.valid_laps}</p>
+                            <p><strong>Fastest Lap:</strong> ${formatLapTime(stats.fastest_lap_time)}</p>
+                            <p><strong>Average:</strong> ${formatLapTime(stats.average_lap_time)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    return html;
+}
+
+/**
  * Export Functions
  */
 

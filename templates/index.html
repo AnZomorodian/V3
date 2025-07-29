@@ -78,11 +78,20 @@
                             <span class="badge bg-secondary fs-5 px-4 py-3">
                                 <i class="fas fa-users me-2"></i>Driver Compare
                             </span>
+                            <span class="badge bg-danger fs-5 px-4 py-3">
+                                <i class="fas fa-road me-2"></i>Track Analysis
+                            </span>
+                            <span class="badge bg-dark fs-5 px-4 py-3">
+                                <i class="fas fa-circle me-2"></i>Tire Performance
+                            </span>
+                            <span class="badge bg-light text-dark fs-5 px-4 py-3">
+                                <i class="fas fa-wind me-2"></i>Aerodynamics
+                            </span>
                         </div>
                         <div class="row text-center mt-4">
                             <div class="col-md-3 col-6 mb-3">
                                 <div class="metric-card">
-                                    <div class="metric-value">7+</div>
+                                    <div class="metric-value">12+</div>
                                     <div class="metric-label">Analysis Types</div>
                                 </div>
                             </div>
@@ -250,6 +259,43 @@
                                                 <i class="fas fa-users fa-2x d-block mb-2"></i>
                                                 <strong>Driver Compare</strong>
                                                 <small class="d-block mt-1">Head-to-head analysis</small>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- New Enhanced Analytics Row -->
+                                    <div class="row g-3 mt-3">
+                                        <div class="col-12">
+                                            <h6 class="text-center text-muted mb-3">
+                                                <i class="fas fa-plus-circle me-2"></i>Enhanced Analytics Suite
+                                            </h6>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6">
+                                            <button type="button" class="btn btn-danger w-100 h-100 py-3" onclick="runTrackAnalysis()">
+                                                <i class="fas fa-road fa-2x d-block mb-2"></i>
+                                                <strong>Track Analysis</strong>
+                                                <small class="d-block mt-1">Sector & mastery analysis</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6">
+                                            <button type="button" class="btn btn-dark w-100 h-100 py-3" onclick="runTirePerformance()">
+                                                <i class="fas fa-circle fa-2x d-block mb-2"></i>
+                                                <strong>Tire Performance</strong>
+                                                <small class="d-block mt-1">Degradation & strategy</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6">
+                                            <button type="button" class="btn btn-outline-light w-100 h-100 py-3" onclick="runDownforceAnalysis()">
+                                                <i class="fas fa-wind fa-2x d-block mb-2"></i>
+                                                <strong>Downforce</strong>
+                                                <small class="d-block mt-1">Aerodynamic setup</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6">
+                                            <button type="button" class="btn btn-gradient w-100 h-100 py-3" onclick="runComprehensiveComparison()">
+                                                <i class="fas fa-chart-bar fa-2x d-block mb-2"></i>
+                                                <strong>Multi-Driver</strong>
+                                                <small class="d-block mt-1">Comprehensive comparison</small>
                                             </button>
                                         </div>
                                     </div>
