@@ -134,7 +134,8 @@ class AdvancedF1Analytics:
                         'standard_deviation': float(std_dev),
                         'coefficient_of_variation': float(cv),
                         'consistency_score': float(self.calculate_consistency_score(lap_times_seconds)),
-                        'outlier_laps': self.identify_outlier_laps(lap_times_seconds)
+                        'outlier_laps': self.identify_outlier_laps(lap_times_seconds),
+                        'consistency_windows': self.analyze_consistency_windows(lap_times_seconds)
                     }
                 except Exception:
                     continue
@@ -274,13 +275,18 @@ class AdvancedF1Analytics:
                         fastest_lap = lap_times.min()
                         pace_std = lap_times.std()
 
+                        # Convert lap times to seconds for pace analysis
+                        lap_times_seconds = [lt.total_seconds() for lt in lap_times if pd.notna(lt)]
+                        representative_pace = self.calculate_race_pace(lap_times_seconds)
+
                         race_data[str(driver)] = {
                             'average_pace': str(avg_pace) if pd.notna(avg_pace) else None,
                             'median_pace': str(median_pace) if pd.notna(median_pace) else None,
                             'pace_consistency': float(pace_std.total_seconds()) if pd.notna(pace_std) else None,
                             'fastest_race_lap': str(fastest_lap) if pd.notna(fastest_lap) else None,
                             'stint_analysis': self.analyze_race_stints(driver_laps),
-                            'position_changes': self.analyze_position_changes(driver_laps)
+                            'position_changes': self.analyze_position_changes(driver_laps),
+                            'representative_pace': float(representative_pace) if representative_pace is not None else None
                         }
                 except Exception:
                     continue
@@ -651,3 +657,153 @@ class AdvancedF1Analytics:
                 'analysis_type': 'driver_comparison',
                 'timestamp': datetime.now().isoformat()
             }
+
+    def _calculate_dimensional_advantage(self, dimension_scores: Dict[str, float]) -> float:
+        """Calculate advantage in hyperdimensional space"""
+        if not dimension_scores:
+            return 0.0
+
+        # Calculate overall performance vector magnitude
+        scores = list(dimension_scores.values())
+        magnitude = np.linalg.norm(scores)
+
+        # Normalize to 0-1 range
+        return min(1.0, magnitude / len(scores))
+
+    def analyze_consistency_windows(self, lap_times_seconds):
+        """Analyze consistency in different time windows"""
+        try:
+            if len(lap_times_seconds) < 5:
+                return {'error': 'Insufficient data for window analysis'}
+
+            window_size = 5
+            windows = []
+
+            for i in range(0, len(lap_times_seconds) - window_size + 1, window_size):
+                window = lap_times_seconds[i:i + window_size]
+                if len(window) == window_size:
+                    window_cv = np.std(window) / np.mean(window)
+                    windows.append({
+                        'laps': f"{i+1}-{i+window_size}",
+                        'consistency_cv': float(window_cv),
+                        'avg_time': float(np.mean(window)),
+                        'best_time': float(min(window)),
+                        'worst_time': float(max(window))
+                    })
+
+            if windows:
+                best_window = min(windows, key=lambda x: x['consistency_cv'])
+                worst_window = max(windows, key=lambda x: x['consistency_cv'])
+
+                return {
+                    'windows': windows,
+                    'best_consistency_window': best_window,
+                    'worst_consistency_window': worst_window,
+                    'window_count': len(windows)
+                }
+
+            return {'error': 'No complete windows found'}
+
+        except Exception as e:
+            return {'error': str(e)}
+
+    def calculate_race_pace(self, lap_times_seconds):
+        """Calculate representative race pace"""
+        try:
+            if len(lap_times_seconds) < 5:
+                return None
+
+            # Remove fastest and slowest 10% to get representative pace
+            sorted_times = sorted(lap_times_seconds)
+            start_idx = int(len(sorted_times) * 0.1)
+            end_idx = int(len(sorted_times) * 0.9)
+
+            representative_times = sorted_times[start_idx:end_idx]
+            return np.mean(representative_times) if representative_times else None
+
+        except Exception:
+            return None
+
+    def analyze_speed_zones(self, speed_data):
+        """Analyze speed zones and acceleration events"""
+        try:
+            if speed_data.empty:
+                return {'high_speed_percentage': 0, 'acceleration_events': 0}
+
+            max_speed = speed_data.max()
+            high_speed_threshold = max_speed * 0.9
+
+            high_speed_percentage = (speed_data >= high_speed_threshold).sum() / len(speed_data) * 100
+
+            # Count acceleration events (speed increases > 20 km/h over 3 data points)
+            acceleration_events = 0
+            for i in range(3, len(speed_data)):
+                speed_increase = speed_data.iloc[i] - speed_data.iloc[i-3]
+                if speed_increase > 20:
+                    acceleration_events += 1
+
+            return {
+                'high_speed_percentage': float(high_speed_percentage),
+                'acceleration_events': acceleration_events
+            }
+
+        except Exception:
+            return {'high_speed_percentage': 0, 'acceleration_events': 0}
+
+    def analyze_throttle_usage(self, throttle_data):
+        """Analyze throttle usage patterns"""
+        try:
+            if throttle_data.empty:
+                return {'full_throttle_time': 0, 'smoothness_score': 0, 'aggressive_count': 0}
+
+            # Full throttle percentage (>95%)
+            full_throttle_time = (throttle_data > 95).sum() / len(throttle_data) * 100
+
+            # Smoothness score (inverse of throttle variance)
+            throttle_variance = throttle_data.var()
+            smoothness_score = 100 / (1 + throttle_variance / 100)
+
+            # Aggressive inputs (rapid changes > 50% in one data point)
+            aggressive_count = 0
+            for i in range(1, len(throttle_data)):
+                change = abs(throttle_data.iloc[i] - throttle_data.iloc[i-1])
+                if change > 50:
+                    aggressive_count += 1
+
+            return {
+                'full_throttle_time': float(full_throttle_time),
+                'smoothness_score': float(smoothness_score),
+                'aggressive_count': aggressive_count
+            }
+
+        except Exception:
+            return {'full_throttle_time': 0, 'smoothness_score': 0, 'aggressive_count': 0}
+
+    def analyze_driver_sectors(self, driver_laps):
+        """Analyze sector performance for individual driver"""
+        try:
+            sector_cols = ['Sector1Time', 'Sector2Time', 'Sector3Time']
+            available_sectors = [col for col in sector_cols if col in driver_laps.columns]
+
+            if not available_sectors:
+                return None
+
+            sector_analysis = {}
+
+            for i, sector_col in enumerate(available_sectors, 1):
+                sector_times = driver_laps[sector_col].dropna()
+                if not sector_times.empty:
+                    sector_seconds = [st.total_seconds() for st in sector_times if pd.notna(st)]
+                    if sector_seconds:
+                        sector_analysis[f'sector_{i}'] = {
+                            'best_time': float(min(sector_seconds)),
+                            'avg_time': float(np.mean(sector_seconds)),
+                            'worst_time': float(max(sector_seconds)),
+                            'consistency': float(np.std(sector_seconds) / np.mean(sector_seconds)),
+                            'improvement': float((sector_seconds[0] - sector_seconds[-1]) / sector_seconds[0] * 100) if len(sector_seconds) > 1 else 0
+                        }
+
+            return sector_analysis if sector_analysis else None
+
+        except Exception:
+            return None

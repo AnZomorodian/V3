@@ -279,6 +279,46 @@ async function runAdvancedAnalysis() {
     }
 }
 
+// Run Weather Analysis
+async function runWeatherAnalysis() {
+    currentAnalysisType = 'weather';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        const result = await makeAPICall('/api/weather-analysis', params);
+
+        currentResults = result;
+        displayWeatherResults(result);
+        showWeatherSection();
+
+    } catch (error) {
+        displayError(`Weather analysis failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
+// Run Driver Comparison
+async function runDriverComparison() {
+    currentAnalysisType = 'comparison';
+    showLoading();
+
+    try {
+        const params = getFormParameters();
+        const result = await makeAPICall('/api/driver-comparison', params);
+
+        currentResults = result;
+        displayComparisonResults(result);
+        showComparisonSection();
+
+    } catch (error) {
+        displayError(`Driver comparison failed: ${error.message}`);
+    } finally {
+        hideLoading();
+    }
+}
+
 /**
  * Results Display Functions
  */
@@ -668,7 +708,7 @@ function displayStressResults(data) {
         }
 
         // Consistency Analysis
-        if (data.consistency_stress && !data.consistency_stress.error) {
+       if (data.consistency_stress && !data.consistency_stress.error) {
             html += `
                 <div class="row mb-4">
                     <div class="col-12">
@@ -681,7 +721,7 @@ function displayStressResults(data) {
                                     <div class="col-md-3">
                                         <div class="metric-card">
                                             <div class="metric-value">${(data.consistency_stress.overall_consistency * 100).toFixed(2)}%</div>
-                                            <div class="metric-label">Overall Consistency CV</div>
+                                            <div class="metric-label">Overall Consistency</div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -752,6 +792,9 @@ function displayAdvancedResults(data) {
                                                 <th>Average Lap</th>
                                                 <th>Total Laps</th>
                                                 <th>Max Speed</th>
+                                                <th>Consistency</th>
+                                                <th>Overtakes</th>
+                                                <th>Defenses</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -765,6 +808,9 @@ function displayAdvancedResults(data) {
                         <td>${formatLapTime(metrics.average_lap_time)}</td>
                         <td>${metrics.total_laps}</td>
                         <td>${metrics.max_speed ? metrics.max_speed.toFixed(1) + ' km/h' : 'N/A'}</td>
+                        <td>${metrics.consistency_score ? metrics.consistency_score.toFixed(2) : 'N/A'}</td>
+                        <td>${metrics.overtakes || 'N/A'}</td>
+                        <td>${metrics.defenses || 'N/A'}</td>
                     </tr>
                 `;
             });
@@ -787,7 +833,7 @@ function displayAdvancedResults(data) {
                     <div class="col-12">
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5><i class="fas fa-chart-bar me-2"></i>Consistency Analysis</h5>
+                                <h5><i class="fas fa-chart-bar me-2"></i>Lap Time Consistency Analysis</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -802,6 +848,11 @@ function displayAdvancedResults(data) {
                                 <div class="metric-value text-primary">${consistency.consistency_score.toFixed(1)}</div>
                                 <div class="metric-label">Consistency Score</div>
                                 <small>CV: ${(consistency.coefficient_of_variation * 100).toFixed(2)}%</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-light mt-2" onclick="showLapTimeDetails('${driver}')">
+                                    <i class="fas fa-info-circle me-1"></i>Lap Time Details
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1309,6 +1360,10 @@ function showConsistencyDetails() {
     alert('Detailed consistency breakdown would be shown here.');
 }
 
+//showLapTimeDetails
+function showLapTimeDetails(driver) {
+    alert(`Detailed lap time details for ${driver} would be shown here.`);
+}
 /**
  * Analysis History Functions
  */
