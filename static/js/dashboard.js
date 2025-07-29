@@ -1096,6 +1096,8 @@ function createStrategyCharts(data) {
             }
         });
     }
+}
+
 // Create Real-time Charts
 function createRealtimeCharts(data) {
     destroyExistingCharts();

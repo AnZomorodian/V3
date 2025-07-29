@@ -48,35 +48,62 @@
 
     <div class="container mt-4">
         <!-- Enhanced Header Section -->
-        <div class="row mb-4">
+        <div class="row mb-5">
             <div class="col-12">
-                <div class="card hero-card">
+                <div class="card hero-card glow-red">
                     <div class="card-body text-center py-5">
-                        <div class="hero-icon mb-3">
-                            <i class="fas fa-rocket fa-4x text-primary"></i>
+                        <div class="hero-icon mb-4">
+                            <i class="fas fa-flag-checkered fa-5x"></i>
                         </div>
-                        <h1 class="card-title display-4 fw-bold mb-3">
-                            Advanced F1 Performance Analytics
+                        <h1 class="card-title display-3 fw-bold mb-4">
+                            F1 Performance Analytics
+                            <small class="d-block display-6 mt-2" style="opacity: 0.8;">Powered by Quantum Intelligence</small>
                         </h1>
-                        <p class="lead mb-4">
-                            Comprehensive analysis using quantum modeling, race strategy insights, weather impact assessment, and real-time analytics
+                        <p class="lead mb-5 fs-4">
+                            Experience the future of Formula 1 analytics with advanced quantum modeling, AI-driven strategy insights, comprehensive weather analysis, and real-time telemetry processing
                         </p>
-                        <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <span class="badge bg-primary fs-6 px-3 py-2">
-                                <i class="fas fa-atom me-1"></i>Quantum Analysis
+                        <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+                            <span class="badge bg-primary fs-5 px-4 py-3 glow-blue">
+                                <i class="fas fa-atom me-2"></i>Quantum Analysis
                             </span>
-                            <span class="badge bg-success fs-6 px-3 py-2">
-                                <i class="fas fa-chess me-1"></i>Strategy Optimization
+                            <span class="badge bg-success fs-5 px-4 py-3 glow-green">
+                                <i class="fas fa-chess me-2"></i>Strategy AI
                             </span>
-                            <span class="badge bg-info fs-6 px-3 py-2">
-                                <i class="fas fa-cloud-sun me-1"></i>Weather Impact
+                            <span class="badge bg-info fs-5 px-4 py-3">
+                                <i class="fas fa-cloud-sun me-2"></i>Weather ML
                             </span>
-                            <span class="badge bg-warning fs-6 px-3 py-2">
-                                <i class="fas fa-heartbeat me-1"></i>Driver Stress
+                            <span class="badge bg-warning fs-5 px-4 py-3">
+                                <i class="fas fa-heartbeat me-2"></i>Stress Index
                             </span>
-                            <span class="badge bg-secondary fs-6 px-3 py-2">
-                                <i class="fas fa-users me-1"></i>Head-to-Head
+                            <span class="badge bg-secondary fs-5 px-4 py-3">
+                                <i class="fas fa-users me-2"></i>Driver Compare
                             </span>
+                        </div>
+                        <div class="row text-center mt-4">
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">7+</div>
+                                    <div class="metric-label">Analysis Types</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">24</div>
+                                    <div class="metric-label">Race Weekends</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">20</div>
+                                    <div class="metric-label">Drivers</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value">∞</div>
+                                    <div class="metric-label">Insights</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,30 +197,62 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row mt-3">
+                            <div class="row mt-4">
                                 <div class="col-12">
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-primary" onclick="runQuantumAnalysis()">
-                                            <i class="fas fa-atom me-1"></i>Quantum Analysis
-                                        </button>
-                                        <button type="button" class="btn btn-success" onclick="runRaceStrategy()">
-                                            <i class="fas fa-chess me-1"></i>Race Strategy
-                                        </button>
-                                        <button type="button" class="btn btn-info" onclick="runRealtimeAnalysis()">
-                                            <i class="fas fa-broadcast-tower me-1"></i>Real-time
-                                        </button>
-                                        <button type="button" class="btn btn-warning" onclick="runStressAnalysis()">
-                                            <i class="fas fa-heartbeat me-1"></i>Stress Analysis
-                                        </button>
-                                        <button type="button" class="btn btn-secondary" onclick="runAdvancedAnalysis()">
-                                            <i class="fas fa-cogs me-1"></i>Advanced
-                                        </button>
-                                        <button type="button" class="btn btn-dark" onclick="runWeatherAnalysis()">
-                                            <i class="fas fa-cloud-sun me-1"></i>Weather
-                                        </button>
-                                        <button type="button" class="btn btn-light text-dark" onclick="runDriverComparison()">
-                                            <i class="fas fa-users me-1"></i>Compare
-                                        </button>
+                                    <h5 class="mb-3 text-center">
+                                        <i class="fas fa-rocket me-2 text-primary"></i>
+                                        Choose Your Analysis
+                                    </h5>
+                                    <div class="row g-3">
+                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                            <button type="button" class="btn btn-primary w-100 h-100 py-3" onclick="runQuantumAnalysis()">
+                                                <i class="fas fa-atom fa-2x d-block mb-2"></i>
+                                                <strong>Quantum Analysis</strong>
+                                                <small class="d-block mt-1">Advanced quantum modeling</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                            <button type="button" class="btn btn-success w-100 h-100 py-3" onclick="runRaceStrategy()">
+                                                <i class="fas fa-chess fa-2x d-block mb-2"></i>
+                                                <strong>Race Strategy</strong>
+                                                <small class="d-block mt-1">Pit stop optimization</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                            <button type="button" class="btn btn-info w-100 h-100 py-3" onclick="runRealtimeAnalysis()">
+                                                <i class="fas fa-broadcast-tower fa-2x d-block mb-2"></i>
+                                                <strong>Real-time</strong>
+                                                <small class="d-block mt-1">Live session data</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                            <button type="button" class="btn btn-warning w-100 h-100 py-3" onclick="runStressAnalysis()">
+                                                <i class="fas fa-heartbeat fa-2x d-block mb-2"></i>
+                                                <strong>Stress Analysis</strong>
+                                                <small class="d-block mt-1">Driver performance stress</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <button type="button" class="btn btn-secondary w-100 h-100 py-3" onclick="runAdvancedAnalysis()">
+                                                <i class="fas fa-cogs fa-2x d-block mb-2"></i>
+                                                <strong>Advanced Analytics</strong>
+                                                <small class="d-block mt-1">Comprehensive session data</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <button type="button" class="btn btn-dark w-100 h-100 py-3" onclick="runWeatherAnalysis()">
+                                                <i class="fas fa-cloud-sun fa-2x d-block mb-2"></i>
+                                                <strong>Weather Impact</strong>
+                                                <small class="d-block mt-1">Track conditions analysis</small>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-4 col-md-12">
+                                            <button type="button" class="btn btn-light text-dark w-100 h-100 py-3" onclick="runDriverComparison()">
+                                                <i class="fas fa-users fa-2x d-block mb-2"></i>
+                                                <strong>Driver Compare</strong>
+                                                <small class="d-block mt-1">Head-to-head analysis</small>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
